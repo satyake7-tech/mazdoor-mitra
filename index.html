@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mazdoor Mitra - मज़दूर मित्र</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#f0f2f5;color:#333;min-height:100vh;padding-top:45px}
+.lang-bar{position:fixed;top:0;left:0;right:0;background:#2c3e50;color:white;padding:8px 15px;display:flex;justify-content:space-between;align-items:center;z-index:1000;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
+.lang-bar select{background:#34495e;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:0.9em}
+.version-tag{background:#FF6B35;padding:3px 10px;border-radius:10px;font-size:0.8em;font-weight:bold}
+.screen{display:none;min-height:100vh;animation:slideIn 0.3s}
+.screen.active{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.container{padding:20px;max-width:700px;margin:0 auto}
+#splash{background:linear-gradient(135deg,#FF6B35,#F7931E);align-items:center;justify-content:center;color:white;min-height:calc(100vh - 45px)}
+#splash.active{display:flex}
+.splash-content{text-align:center;padding:40px}
+.splash-content h1{font-size:2.8em;margin-bottom:15px}
+.splash-content p{font-size:1.2em;margin-bottom:40px;opacity:0.95}
+.logo-anim{font-size:5em;margin-bottom:20px;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.btn-primary{background:linear-gradient(135deg,#FF6B35,#F7931E);color:white;border:none;padding:15px 30px;border-radius:10px;font-size:1.05em;font-weight:bold;cursor:pointer;width:100%;margin:10px 0;box-shadow:0 4px 15px rgba(255,107,53,0.4)}
+.back-btn{background:none;border:none;color:#FF6B35;font-size:1em;cursor:pointer;margin-bottom:15px;font-weight:bold;padding:5px 0}
+.logout-btn{background:rgba(255,255,255,0.2);color:white;border:1px solid white;padding:8px 15px;border-radius:5px;cursor:pointer;font-size:0.9em}
+.role-card{background:white;padding:25px;margin:15px 0;border-radius:15px;text-align:center;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.08);transition:all 0.3s;border:2px solid transparent}
+.role-card:hover{transform:translateY(-5px);border-color:#FF6B35}
+.role-icon{font-size:4em;margin-bottom:10px}
+.role-card h3{color:#FF6B35;margin-bottom:5px;font-size:1.4em}
+form label{display:block;margin-top:12px;margin-bottom:5px;color:#555;font-weight:600;font-size:0.9em}
+form input,form select,form textarea{width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;font-size:1em;background:white}
+form input:focus,form select:focus{border-color:#FF6B35;outline:none}
+.search-box{width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;font-size:1em;margin-bottom:10px;background:white}
+.header{background:linear-gradient(135deg,#FF6B35,#F7931E);color:white;padding:20px;display:flex;justify-content:space-between;align-items:center}
+.header h2{font-size:1.3em}
+.header small{opacity:0.9}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+.stat-card{background:white;padding:18px;border-radius:12px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,0.08);cursor:pointer}
+.stat-card h3{color:#FF6B35;font-size:1.8em;margin-bottom:5px}
+.stat-card p{color:#777;font-size:0.85em}
+.tabs{display:flex;background:white;border-radius:10px;overflow:hidden;margin:20px 0;box-shadow:0 2px 5px rgba(0,0,0,0.05);overflow-x:auto}
+.tab-btn{flex:1;background:white;border:none;padding:12px;cursor:pointer;font-weight:600;color:#777;white-space:nowrap;font-size:0.9em}
+.tab-btn.active{background:#FF6B35;color:white}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.job-card{background:white;padding:18px;margin:12px 0;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,0.05);border-left:4px solid #FF6B35}
+.job-card h4{color:#333;margin-bottom:10px;font-size:1.15em}
+.job-card p{margin:4px 0;color:#666;font-size:0.9em}
+.job-card .wage{color:#28a745;font-weight:bold;font-size:1.15em;margin:8px 0}
+.apply-btn,.accept-btn{background:#28a745;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;margin-top:10px;margin-right:5px;font-weight:600}
+.reject-btn{background:#dc3545;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600}
+.applied-btn{background:#6c757d;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:default}
+.complete-btn{background:#007bff;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600}
+.labour-card{background:white;padding:15px;margin:10px 0;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center}
+.labour-info h4{color:#333}
+.labour-info p{color:#666;font-size:0.85em}
+.call-btn{background:#25D366;color:white;padding:8px 15px;border-radius:5px;text-decoration:none;font-weight:600;font-size:0.9em}
+.wallet-card{background:linear-gradient(135deg,#28a745,#20c997);color:white;padding:30px;border-radius:15px;text-align:center;margin:20px 0}
+.wallet-card h1{font-size:2.5em;margin-top:10px}
+.transaction{background:white;padding:15px;margin:8px 0;border-radius:10px;display:flex;justify-content:space-between;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+.transaction .amount-credit{color:#28a745;font-weight:bold}
+.profile-item{background:white;padding:12px 15px;margin:8px 0;border-radius:8px;display:flex;justify-content:space-between;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+.profile-item .label{color:#777;font-size:0.9em}
+.profile-item .value{color:#333;font-weight:600}
+.badge{padding:3px 10px;border-radius:12px;font-size:0.8em;font-weight:600}
+.badge-active{background:#d4edda;color:#155724}
+.badge-pending{background:#fff3cd;color:#856404}
+.badge-completed{background:#d1ecf1;color:#0c5460}
+.badge-rejected{background:#f8d7da;color:#721c24}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:white;padding:12px 25px;border-radius:25px;z-index:9999;opacity:0;transition:opacity 0.3s}
+.toast.show{opacity:1}
+.text-center{text-align:center}
+.mt-20{margin-top:20px}
+h2{margin:15px 0;color:#333;font-size:1.5em}
+h3{margin:20px 0 10px;color:#555;font-size:1.2em}
+a{color:#FF6B35;text-decoration:none;font-weight:600}
+.empty-state{text-align:center;color:#888;padding:30px;background:white;border-radius:10px;margin:15px 0}
+</style>
+</head>
+<body>
+<div class="lang-bar">
+<select id="langSelect" onchange="changeLanguage(this.value)">
+<option value="en">🇬🇧 English</option>
+<option value="hi">🇮🇳 हिंदी</option>
+<option value="mr">🇮🇳 मराठी</option>
+<option value="gu">🇮🇳 ગુજરાતી</option>
+<option value="ta">🇮🇳 தமிழ்</option>
+<option value="te">🇮🇳 తెలుగు</option>
+<option value="bn">🇮🇳 বাংলা</option>
+<option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
+</select>
+<span class="version-tag">MVP 1.0</span>
+</div>
+
+<div id="splash" class="screen active">
+<div class="splash-content">
+<div class="logo-anim">🔨</div>
+<h1 data-i18n="appName">Mazdoor Mitra</h1>
+<p data-i18n="tagline">Right Work, Right Worker</p>
+<button onclick="showScreen('roleSelect')" class="btn-primary" data-i18n="getStarted">Get Started</button>
+</div>
+</div>
+
+<div id="roleSelect" class="screen">
+<div class="container">
+<h2 data-i18n="whoAreYou">Who are you?</h2>
+<div class="role-card" onclick="selectRole('labour')">
+<div class="role-icon">👷</div>
+<h3 data-i18n="iAmLabour">I am a Worker</h3>
+<p data-i18n="findWork">Find work near me</p>
+</div>
+<div class="role-card" onclick="selectRole('contractor')">
+<div class="role-icon">👔</div>
+<h3 data-i18n="iAmContractor">I am a Contractor</h3>
+<p data-i18n="hireWorkers">Hire workers for projects</p>
+</div>
+<div class="role-card" onclick="selectRole('admin')">
+<div class="role-icon">⚙️</div>
+<h3 data-i18n="iAmAdmin">Admin Panel</h3>
+<p data-i18n="manageAll">Manage everything</p>
+</div>
+</div>
+</div>
+
+<div id="login" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
+<h2 data-i18n="login">Login</h2>
+<form onsubmit="loginUser(event)">
+<input type="tel" id="loginPhone" placeholder="Mobile Number" pattern="[0-9]{10}" required>
+<button type="submit" class="btn-primary" data-i18n="loginBtn">Login</button>
+</form>
+<p class="text-center mt-20"><span data-i18n="newUser">New User?</span> <a href="#" onclick="showRegister()" data-i18n="registerHere">Register Here</a></p>
+</div>
+</div>
+
+<div id="labourRegister" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
+<h2 data-i18n="workerReg">Worker Registration</h2>
+<form onsubmit="registerLabour(event)">
+<label data-i18n="fullName">Full Name</label>
+<input type="text" id="lName" required>
+<label data-i18n="mobileNum">Mobile Number</label>
+<input type="tel" id="lPhone" pattern="[0-9]{10}" required>
+<label data-i18n="age">Age</label>
+<input type="number" id="lAge" min="18" max="65" required>
+<label data-i18n="gender">Gender</label>
+<select id="lGender" required>
+<option value="">--</option>
+<option value="Male">Male / पुरुष</option>
+<option value="Female">Female / महिला</option>
+</select>
+<label data-i18n="primarySkill">Primary Skill</label>
+<select id="lSkill" required>
+<option value="">--</option>
+<option value="Helper">Helper / हेल्पर</option>
+<option value="Mason">Mason / राज मिस्त्री</option>
+<option value="Carpenter">Carpenter / बढ़ई</option>
+<option value="Painter">Painter / पेंटर</option>
+<option value="Electrician">Electrician / इलेक्ट्रीशियन</option>
+<option value="Plumber">Plumber / प्लंबर</option>
+<option value="Welder">Welder / वेल्डर</option>
+<option value="Tile Worker">Tile Worker / टाइल मिस्त्री</option>
+<option value="POP Worker">POP Worker / POP मिस्त्री</option>
+<option value="Steel Bender">Steel Bender / सरिया बेंडर</option>
+</select>
+<label data-i18n="experience">Experience (Years)</label>
+<input type="number" id="lExp" min="0" required>
+<label data-i18n="city">City/Area</label>
+<input type="text" id="lLocation" required>
+<label data-i18n="pincode">Pincode</label>
+<input type="text" id="lPincode" pattern="[0-9]{6}" required>
+<label data-i18n="aadhaar">Aadhaar (Last 4 digits)</label>
+<input type="text" id="lAadhaar" pattern="[0-9]{4}" maxlength="4" required>
+<label data-i18n="dailyWage">Daily Wage (₹)</label>
+<input type="number" id="lWage" required>
+<label data-i18n="bankAccount">UPI ID / Bank Account</label>
+<input type="text" id="lUpi" placeholder="example@upi" required>
+<button type="submit" class="btn-primary" data-i18n="registerBtn">Register</button>
+</form>
+</div>
+</div>
+
+<div id="contractorRegister" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
+<h2 data-i18n="contractorReg">Contractor Registration</h2>
+<form onsubmit="registerContractor(event)">
+<label data-i18n="fullName">Full Name</label>
+<input type="text" id="cName" required>
+<label data-i18n="companyName">Company Name (Optional)</label>
+<input type="text" id="cCompany">
+<label data-i18n="mobileNum">Mobile Number</label>
+<input type="tel" id="cPhone" pattern="[0-9]{10}" required>
+<label data-i18n="email">Email</label>
+<input type="email" id="cEmail">
+<label data-i18n="city">City</label>
+<input type="text" id="cLocation" required>
+<label data-i18n="gstNum">GST Number (Optional)</label>
+<input type="text" id="cGst">
+<button type="submit" class="btn-primary" data-i18n="registerBtn">Register</button>
+</form>
+</div>
+</div>
+
+<div id="labourDashboard" class="screen">
+<div class="header">
+<div>
+<h2>👋 <span id="labourName"></span></h2>
+<small id="labourSkillDisp"></small>
+</div>
+<button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+</div>
+<div class="container">
+<div class="stats">
+<div class="stat-card">
+<h3 id="appliedCount">0</h3>
+<p data-i18n="applied">Applied</p>
+</div>
+<div class="stat-card">
+<h3 id="workingCount">0</h3>
+<p data-i18n="working">Working</p>
+</div>
+<div class="stat-card">
+<h3>⭐ <span id="myRating">5.0</span></h3>
+<p data-i18n="rating">Rating</p>
+</div>
+<div class="stat-card" onclick="showWallet()">
+<h3>₹<span id="walletBalance">0</span></h3>
+<p data-i18n="earnings">Earnings</p>
+</div>
+</div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab('jobs',this)" data-i18n="availableJobs">Available Jobs</button>
+<button class="tab-btn" onclick="switchTab('myApps',this)" data-i18n="myApplications">My Applications</button>
+<button class="tab-btn" onclick="switchTab('profile',this)" data-i18n="profile">Profile</button>
+</div>
+<div id="jobsTab" class="tab-content active">
+<input type="text" id="jobSearch" placeholder="🔍 Search jobs..." onkeyup="filterJobs()" class="search-box">
+<div id="jobsList"></div>
+</div>
+<div id="myAppsTab" class="tab-content">
+<div id="myApplicationsList"></div>
+</div>
+<div id="profileTab" class="tab-content">
+<div id="profileInfo"></div>
+</div>
+</div>
+</div>
+
+<div id="contractorDashboard" class="screen">
+<div class="header">
+<div>
+<h2>👋 <span id="contractorName"></span></h2>
+<small id="contractorCompany"></small>
+</div>
+<button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+</div>
+<div class="container">
+<div class="stats">
+<div class="stat-card">
+<h3 id="myJobsCount">0</h3>
+<p data-i18n="postedJobs">Posted Jobs</p>
+</div>
+<div class="stat-card">
+<h3 id="totalApps">0</h3>
+<p data-i18n="applications">Applications</p>
+</div>
+<div class="stat-card">
+<h3 id="activeWorkers">0</h3>
+<p data-i18n="activeWorkers">Active Workers</p>
+</div>
+<div class="stat-card">
+<h3>₹<span id="totalSpent">0</span></h3>
+<p data-i18n="totalSpent">Total Spent</p>
+</div>
+</div>
+<button class="btn-primary" onclick="showScreen('postJob')">➕ <span data-i18n="postNewJob">Post New Job</span></button>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab('myJobs',this)" data-i18n="myJobs">My Jobs</button>
+<button class="tab-btn" onclick="switchTab('browseLabour',this)" data-i18n="browseWorkers">Browse Workers</button>
+</div>
+<div id="myJobsTab" class="tab-content active">
+<div id="myJobsList"></div>
+</div>
+<div id="browseLabourTab" class="tab-content">
+<input type="text" id="labourSearch" placeholder="🔍 Search workers..." onkeyup="filterLabour()" class="search-box">
+<select id="skillFilter" onchange="filterLabour()" class="search-box">
+<option value="">All Skills</option>
+<option value="Helper">Helper</option>
+<option value="Mason">Mason</option>
+<option value="Carpenter">Carpenter</option>
+<option value="Painter">Painter</option>
+<option value="Electrician">Electrician</option>
+<option value="Plumber">Plumber</option>
+<option value="Welder">Welder</option>
+</select>
+<div id="availableLabour"></div>
+</div>
+</div>
+</div>
+
+<div id="postJob" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('contractorDashboard')">← <span data-i18n="back">Back</span></button>
+<h2 data-i18n="postNewJob">Post New Job</h2>
+<form onsubmit="postNewJob(event)">
+<label data-i18n="jobTitle">Job Title</label>
+<input type="text" id="jTitle" required>
+<label data-i18n="skillNeeded">Skill Needed</label>
+<select id="jSkill" required>
+<option value="">--</option>
+<option value="Helper">Helper</option>
+<option value="Mason">Mason</option>
+<option value="Carpenter">Carpenter</option>
+<option value="Painter">Painter</option>
+<option value="Electrician">Electrician</option>
+<option value="Plumber">Plumber</option>
+<option value="Welder">Welder</option>
+<option value="Tile Worker">Tile Worker</option>
+<option value="POP Worker">POP Worker</option>
+<option value="Steel Bender">Steel Bender</option>
+</select>
+<label data-i18n="workersNeeded">Workers Needed</label>
+<input type="number" id="jWorkers" min="1" required>
+<label data-i18n="dailyWage">Daily Wage (₹)</label>
+<input type="number" id="jWage" required>
+<label data-i18n="duration">Duration (Days)</label>
+<input type="number" id="jDays" min="1" required>
+<label data-i18n="startDate">Start Date</label>
+<input type="date" id="jStartDate" required>
+<label data-i18n="siteAddress">Site Address</label>
+<input type="text" id="jLocation" required>
+<label data-i18n="pincode">Pincode</label>
+<input type="text" id="jPincode" pattern="[0-9]{6}" required>
+<label data-i18n="description">Description</label>
+<textarea id="jDesc" rows="3"></textarea>
+<button type="submit" class="btn-primary" data-i18n="postJobBtn">Post Job</button>
+</form>
+</div>
+</div>
+
+<div id="walletScreen" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('labourDashboard')">← <span data-i18n="back">Back</span></button>
+<h2>💰 <span data-i18n="myWallet">My Wallet</span></h2>
+<div class="wallet-card">
+<p data-i18n="totalBalance">Total Balance</p>
+<h1>₹<span id="walletTotalAmount">0</span></h1>
+</div>
+<h3 data-i18n="transactions">Transactions</h3>
+<div id="transactionList"></div>
+</div>
+</div>
+
+<div id="adminDashboard" class="screen">
+<div class="header">
+<h2>⚙️ <span data-i18n="adminPanel">Admin Panel</span></h2>
+<button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+</div>
+<div class="container">
+<div class="stats">
+<div class="stat-card">
+<h3 id="totalLabour">0</h3>
+<p data-i18n="totalWorkers">Workers</p>
+</div>
+<div class="stat-card">
+<h3 id="totalContractors">0</h3>
+<p data-i18n="totalContractors">Contractors</p>
+</div>
+<div class="stat-card">
+<h3 id="totalJobs">0</h3>
+<p data-i18n="totalJobs">Jobs</p>
+</div>
+<div class="stat-card">
+<h3>₹<span id="totalRevenue">0</span></h3>
+<p data-i18n="commission">Commission (15%)</p>
+</div>
+</div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchAdminTab('workers',this)" data-i18n="workers">Workers</button>
+<button class="tab-btn" onclick="switchAdminTab('contractors',this)" data-i18n="contractors">Contractors</button>
+<button class="tab-btn" onclick="switchAdminTab('jobs',this)" data-i18n="jobs">Jobs</button>
+<button class="tab-btn" onclick="switchAdminTab('payments',this)" data-i18n="payments">Payments</button>
+</div>
+<div id="workersAdminTab" class="tab-content active"><div id="allLabour"></div></div>
+<div id="contractorsAdminTab" class="tab-content"><div id="allContractors"></div></div>
+<div id="jobsAdminTab" class="tab-content"><div id="allJobs"></div></div>
+<div id="paymentsAdminTab" class="tab-content"><div id="allPayments"></div></div>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const translations={
+en:{appName:"Mazdoor Mitra",tagline:"Right Work, Right Worker",getStarted:"Get Started",whoAreYou:"Who are you?",iAmLabour:"I am a Worker",findWork:"Find work near me",iAmContractor:"I am a Contractor",hireWorkers:"Hire workers for projects",iAmAdmin:"Admin Panel",manageAll:"Manage everything",back:"Back",login:"Login",loginBtn:"Login",newUser:"New User?",registerHere:"Register Here",workerReg:"Worker Registration",fullName:"Full Name",mobileNum:"Mobile Number",age:"Age",gender:"Gender",primarySkill:"Primary Skill",experience:"Experience (Years)",city:"City/Area",pincode:"Pincode",aadhaar:"Aadhaar (Last 4 digits)",dailyWage:"Daily Wage (₹)",bankAccount:"UPI ID / Bank Account",registerBtn:"Register",contractorReg:"Contractor Registration",companyName:"Company Name (Optional)",email:"Email",gstNum:"GST Number (Optional)",logout:"Logout",applied:"Applied",working:"Working",rating:"Rating",earnings:"Earnings",availableJobs:"Available Jobs",myApplications:"My Applications",profile:"Profile",postedJobs:"Posted Jobs",applications:"Applications",activeWorkers:"Active Workers",totalSpent:"Total Spent",postNewJob:"Post New Job",myJobs:"My Jobs",browseWorkers:"Browse Workers",jobTitle:"Job Title",skillNeeded:"Skill Needed",workersNeeded:"Workers Needed",duration:"Duration (Days)",startDate:"Start Date",siteAddress:"Site Address",description:"Description",postJobBtn:"Post Job",myWallet:"My Wallet",totalBalance:"Total Balance",transactions:"Transactions",adminPanel:"Admin Panel",totalWorkers:"Workers",totalContractors:"Contractors",totalJobs:"Jobs",commission:"Commission (15%)",workers:"Workers",contractors:"Contractors",jobs:"Jobs",payments:"Payments"},
+hi:{appName:"मज़दूर मित्र",tagline:"सही काम, सही मज़दूर",getStarted:"शुरू करें",whoAreYou:"आप कौन हैं?",iAmLabour:"मैं मज़दूर हूं",findWork:"पास का काम ढूंढें",iAmContractor:"मैं ठेकेदार हूं",hireWorkers:"प्रोजेक्ट के लिए मज़दूर",iAmAdmin:"एडमिन पैनल",manageAll:"सब कुछ संभालें",back:"वापस",login:"लॉगिन",loginBtn:"लॉगिन करें",newUser:"नए हैं?",registerHere:"रजिस्टर करें",workerReg:"मज़दूर रजिस्ट्रेशन",fullName:"पूरा नाम",mobileNum:"मोबाइल नंबर",age:"उम्र",gender:"लिंग",primarySkill:"मुख्य काम",experience:"अनुभव (साल)",city:"शहर/इलाका",pincode:"पिन कोड",aadhaar:"आधार (आखिरी 4 अंक)",dailyWage:"रोज़ का रेट (₹)",bankAccount:"UPI / बैंक अकाउंट",registerBtn:"रजिस्टर करें",contractorReg:"ठेकेदार रजिस्ट्रेशन",companyName:"कंपनी का नाम",email:"ईमेल",gstNum:"GST नंबर",logout:"लॉगआउट",applied:"अप्लाई किए",working:"काम पर",rating:"रेटिंग",earnings:"कमाई",availableJobs:"उपलब्ध काम",myApplications:"मेरी अर्जियां",profile:"प्रोफाइल",postedJobs:"पोस्ट किए काम",applications:"अर्जियां",activeWorkers:"एक्टिव मज़दूर",totalSpent:"कुल खर्च",postNewJob:"नया काम पोस्ट करें",myJobs:"मेरे काम",browseWorkers:"मज़दूर देखें",jobTitle:"काम का नाम",skillNeeded:"कौन सा मज़दूर",workersNeeded:"कितने मज़दूर",duration:"अवधि (दिन)",startDate:"शुरू की तारीख",siteAddress:"साइट का पता",description:"विवरण",postJobBtn:"पोस्ट करें",myWallet:"मेरा वॉलेट",totalBalance:"कुल बैलेंस",transactions:"लेन-देन",adminPanel:"एडमिन पैनल",totalWorkers:"मज़दूर",totalContractors:"ठेकेदार",totalJobs:"काम",commission:"कमीशन (15%)",workers:"मज़दूर",contractors:"ठेकेदार",jobs:"काम",payments:"पेमेंट"},
+mr:{appName:"मजदूर मित्र",tagline:"योग्य काम, योग्य कामगार",getStarted:"सुरू करा",whoAreYou:"तुम्ही कोण आहात?",iAmLabour:"मी कामगार आहे",findWork:"जवळचे काम शोधा",iAmContractor:"मी कंत्राटदार आहे",hireWorkers:"प्रकल्पासाठी कामगार",iAmAdmin:"अॅडमिन पॅनेल",manageAll:"सर्व व्यवस्थापन",back:"मागे",login:"लॉगिन",loginBtn:"लॉगिन करा",newUser:"नवीन आहात?",registerHere:"नोंदणी करा",workerReg:"कामगार नोंदणी",fullName:"पूर्ण नाव",mobileNum:"मोबाईल नंबर",age:"वय",gender:"लिंग",primarySkill:"मुख्य कौशल्य",experience:"अनुभव (वर्षे)",city:"शहर/क्षेत्र",pincode:"पिन कोड",aadhaar:"आधार (शेवटचे 4 अंक)",dailyWage:"रोजचा दर (₹)",bankAccount:"UPI / बँक खाते",registerBtn:"नोंदणी करा",contractorReg:"कंत्राटदार नोंदणी",companyName:"कंपनीचे नाव",email:"ईमेल",gstNum:"GST क्रमांक",logout:"लॉगआउट",applied:"अर्ज केले",working:"कामावर",rating:"रेटिंग",earnings:"कमाई",availableJobs:"उपलब्ध कामे",myApplications:"माझे अर्ज",profile:"प्रोफाइल",postedJobs:"पोस्ट केलेली कामे",applications:"अर्ज",activeWorkers:"सक्रिय कामगार",totalSpent:"एकूण खर्च",postNewJob:"नवीन काम पोस्ट करा",myJobs:"माझी कामे",browseWorkers:"कामगार पहा",jobTitle:"कामाचे नाव",skillNeeded:"कोणते कौशल्य",workersNeeded:"किती कामगार",duration:"कालावधी (दिवस)",startDate:"सुरुवातीची तारीख",siteAddress:"साइटचा पत्ता",description:"वर्णन",postJobBtn:"पोस्ट करा",myWallet:"माझे वॉलेट",totalBalance:"एकूण बॅलन्स",transactions:"व्यवहार",adminPanel:"अॅडमिन पॅनेल",totalWorkers:"कामगार",totalContractors:"कंत्राटदार",totalJobs:"कामे",commission:"कमिशन (15%)",workers:"कामगार",contractors:"कंत्राटदार",jobs:"कामे",payments:"पेमेंट"},
+gu:{appName:"મજૂર મિત્ર",tagline:"યોગ્ય કામ, યોગ્ય મજૂર",getStarted:"શરૂ કરો",whoAreYou:"તમે કોણ છો?",iAmLabour:"હું મજૂર છું",findWork:"નજીકનું કામ શોધો",iAmContractor:"હું કોન્ટ્રાક્ટર છું",hireWorkers:"પ્રોજેક્ટ માટે મજૂર",iAmAdmin:"એડમિન પેનલ",manageAll:"બધું મેનેજ કરો",back:"પાછા",login:"લોગિન",loginBtn:"લોગિન કરો",newUser:"નવા છો?",registerHere:"નોંધણી કરો",workerReg:"મજૂર નોંધણી",fullName:"પૂરું નામ",mobileNum:"મોબાઇલ નંબર",age:"ઉંમર",gender:"લિંગ",primarySkill:"મુખ્ય કૌશલ્ય",experience:"અનુભવ (વર્ષ)",city:"શહેર/વિસ્તાર",pincode:"પિન કોડ",aadhaar:"આધાર (છેલ્લા 4 અંક)",dailyWage:"રોજનો દર (₹)",bankAccount:"UPI / બેંક એકાઉન્ટ",registerBtn:"નોંધણી કરો",contractorReg:"કોન્ટ્રાક્ટર નોંધણી",companyName:"કંપનીનું નામ",email:"ઇમેઇલ",gstNum:"GST નંબર",logout:"લોગઆઉટ",applied:"અરજી કરી",working:"કામ પર",rating:"રેટિંગ",earnings:"કમાણી",availableJobs:"ઉપલબ્ધ કામો",myApplications:"મારી અરજીઓ",profile:"પ્રોફાઇલ",postedJobs:"પોસ્ટ કરેલા કામો",applications:"અરજીઓ",activeWorkers:"સક્રિય મજૂરો",totalSpent:"કુલ ખર્ચ",postNewJob:"નવું કામ પોસ્ટ કરો",myJobs:"મારા કામો",browseWorkers:"મજૂરો જુઓ",jobTitle:"કામનું નામ",skillNeeded:"કયું કૌશલ્ય",workersNeeded:"કેટલા મજૂરો",duration:"અવધિ (દિવસ)",startDate:"શરૂઆતની તારીખ",siteAddress:"સાઇટનું સરનામું",description:"વર્ણન",postJobBtn:"પોસ્ટ કરો",myWallet:"મારું વોલેટ",totalBalance:"કુલ બેલેન્સ",transactions:"વ્યવહારો",adminPanel:"એડમિન પેનલ",totalWorkers:"મજૂરો",totalContractors:"કોન્ટ્રાક્ટરો",totalJobs:"કામો",commission:"કમિશન (15%)",workers:"મજૂરો",contractors:"કોન્ટ્રાક્ટરો",jobs:"કામો",payments:"પેમેન્ટ"},
+ta:{appName:"மஜ்தூர் மித்ரா",tagline:"சரியான வேலை, சரியான தொழிலாளி",getStarted:"தொடங்கவும்",whoAreYou:"நீங்கள் யார்?",iAmLabour:"நான் தொழிலாளி",findWork:"அருகில் வேலை தேடு",iAmContractor:"நான் ஒப்பந்ததாரர்",hireWorkers:"திட்டத்திற்கு தொழிலாளர்",iAmAdmin:"நிர்வாக பேனல்",manageAll:"எல்லாவற்றையும் நிர்வகிக்க",back:"பின்",login:"உள்நுழைய",loginBtn:"உள்நுழைய",newUser:"புதியவரா?",registerHere:"பதிவு செய்க",workerReg:"தொழிலாளி பதிவு",fullName:"முழு பெயர்",mobileNum:"மொபைல் எண்",age:"வயது",gender:"பாலினம்",primarySkill:"முதன்மை திறன்",experience:"அனுபவம் (ஆண்டுகள்)",city:"நகரம்/பகுதி",pincode:"பின்கோடு",aadhaar:"ஆதார் (கடைசி 4 இலக்கங்கள்)",dailyWage:"நாள் கூலி (₹)",bankAccount:"UPI / வங்கி கணக்கு",registerBtn:"பதிவு செய்க",contractorReg:"ஒப்பந்ததாரர் பதிவு",companyName:"நிறுவன பெயர்",email:"மின்னஞ்சல்",gstNum:"GST எண்",logout:"வெளியேறு",applied:"விண்ணப்பித்தது",working:"வேலையில்",rating:"மதிப்பீடு",earnings:"வருமானம்",availableJobs:"கிடைக்கும் வேலைகள்",myApplications:"என் விண்ணப்பங்கள்",profile:"சுயவிவரம்",postedJobs:"இடுகையிட்ட வேலைகள்",applications:"விண்ணப்பங்கள்",activeWorkers:"செயலில் தொழிலாளர்",totalSpent:"மொத்த செலவு",postNewJob:"புதிய வேலை இடுகை",myJobs:"என் வேலைகள்",browseWorkers:"தொழிலாளர்களை பார்",jobTitle:"வேலை பெயர்",skillNeeded:"என்ன திறன்",workersNeeded:"எத்தனை தொழிலாளர்",duration:"காலம் (நாட்கள்)",startDate:"தொடக்க தேதி",siteAddress:"தள முகவரி",description:"விளக்கம்",postJobBtn:"இடுகை",myWallet:"என் பணப்பை",totalBalance:"மொத்த இருப்பு",transactions:"பரிவர்த்தனைகள்",adminPanel:"நிர்வாக பேனல்",totalWorkers:"தொழிலாளர்",totalContractors:"ஒப்பந்ததாரர்",totalJobs:"வேலைகள்",commission:"கமிஷன் (15%)",workers:"தொழிலாளர்",contractors:"ஒப்பந்ததாரர்",jobs:"வேலைகள்",payments:"பணம்"},
+te:{appName:"మజ్దూర్ మిత్ర",tagline:"సరైన పని, సరైన కార్మికుడు",getStarted:"ప్రారంభించండి",whoAreYou:"మీరు ఎవరు?",iAmLabour:"నేను కార్మికుడిని",findWork:"దగ్గర పని వెతకండి",iAmContractor:"నేను కాంట్రాక్టర్",hireWorkers:"ప్రాజెక్ట్ కోసం కార్మికులు",iAmAdmin:"అడ్మిన్ ప్యానెల్",manageAll:"అన్నీ నిర్వహించండి",back:"వెనుకకు",login:"లాగిన్",loginBtn:"లాగిన్",newUser:"కొత్తవారా?",registerHere:"నమోదు చేయండి",workerReg:"కార్మికుడు నమోదు",fullName:"పూర్తి పేరు",mobileNum:"మొబైల్ నంబర్",age:"వయస్సు",gender:"లింగం",primarySkill:"ముఖ్య నైపుణ్యం",experience:"అనుభవం (సంవత్సరాలు)",city:"నగరం/ప్రాంతం",pincode:"పిన్ కోడ్",aadhaar:"ఆధార్ (చివరి 4 అంకెలు)",dailyWage:"రోజువారీ వేతనం (₹)",bankAccount:"UPI / బ్యాంక్ ఖాతా",registerBtn:"నమోదు చేయండి",contractorReg:"కాంట్రాక్టర్ నమోదు",companyName:"కంపెనీ పేరు",email:"ఇమెయిల్",gstNum:"GST నంబర్",logout:"లాగ్‌అవుట్",applied:"దరఖాస్తు",working:"పని",rating:"రేటింగ్",earnings:"ఆదాయం",availableJobs:"అందుబాటులో ఉన్న పనులు",myApplications:"నా దరఖాస్తులు",profile:"ప్రొఫైల్",postedJobs:"పోస్ట్ చేసిన పనులు",applications:"దరఖాస్తులు",activeWorkers:"క్రియాశీల కార్మికులు",totalSpent:"మొత్తం ఖర్చు",postNewJob:"కొత్త పని పోస్ట్",myJobs:"నా పనులు",browseWorkers:"కార్మికులను చూడండి",jobTitle:"పని పేరు",skillNeeded:"ఏ నైపుణ్యం",workersNeeded:"ఎంత మంది కార్మికులు",duration:"వ్యవధి (రోజులు)",startDate:"ప్రారంభ తేదీ",siteAddress:"సైట్ చిరునామా",description:"వివరణ",postJobBtn:"పోస్ట్ చేయండి",myWallet:"నా వాలెట్",totalBalance:"మొత్తం బ్యాలెన్స్",transactions:"లావాదేవీలు",adminPanel:"అడ్మిన్ ప్యానెల్",totalWorkers:"కార్మికులు",totalContractors:"కాంట్రాక్టర్లు",totalJobs:"పనులు",commission:"కమీషన్ (15%)",workers:"కార్మికులు",contractors:"కాంట్రాక్టర్లు",jobs:"పనులు",payments:"చెల్లింపులు"},
+bn:{appName:"মজদুর মিত্র",tagline:"সঠিক কাজ, সঠিক শ্রমিক",getStarted:"শুরু করুন",whoAreYou:"আপনি কে?",iAmLabour:"আমি শ্রমিক",findWork:"কাছাকাছি কাজ খুঁজুন",iAmContractor:"আমি ঠিকাদার",hireWorkers:"প্রকল্পের জন্য শ্রমিক",iAmAdmin:"অ্যাডমিন প্যানেল",manageAll:"সব পরিচালনা করুন",back:"পিছনে",login:"লগইন",loginBtn:"লগইন করুন",newUser:"নতুন?",registerHere:"নিবন্ধন করুন",workerReg:"শ্রমিক নিবন্ধন",fullName:"পূর্ণ নাম",mobileNum:"মোবাইল নম্বর",age:"বয়স",gender:"লিঙ্গ",primarySkill:"প্রধান দক্ষতা",experience:"অভিজ্ঞতা (বছর)",city:"শহর/এলাকা",pincode:"পিন কোড",aadhaar:"আধার (শেষ ৪ সংখ্যা)",dailyWage:"দৈনিক মজুরি (₹)",bankAccount:"UPI / ব্যাংক অ্যাকাউন্ট",registerBtn:"নিবন্ধন",contractorReg:"ঠিকাদার নিবন্ধন",companyName:"কোম্পানির নাম",email:"ইমেইল",gstNum:"GST নম্বর",logout:"লগআউট",applied:"আবেদন",working:"কাজে",rating:"রেটিং",earnings:"আয়",availableJobs:"উপলব্ধ কাজ",myApplications:"আমার আবেদন",profile:"প্রোফাইল",postedJobs:"পোস্ট করা কাজ",applications:"আবেদন",activeWorkers:"সক্রিয় শ্রমিক",totalSpent:"মোট খরচ",postNewJob:"নতুন কাজ পোস্ট",myJobs:"আমার কাজ",browseWorkers:"শ্রমিক দেখুন",jobTitle:"কাজের নাম",skillNeeded:"কোন দক্ষতা",workersNeeded:"কতজন শ্রমিক",duration:"সময়কাল (দিন)",startDate:"শুরুর তারিখ",siteAddress:"সাইটের ঠিকানা",description:"বিবরণ",postJobBtn:"পোস্ট করুন",myWallet:"আমার ওয়ালেট",totalBalance:"মোট ব্যালেন্স",transactions:"লেনদেন",adminPanel:"অ্যাডমিন প্যানেল",totalWorkers:"শ্রমিক",totalContractors:"ঠিকাদার",totalJobs:"কাজ",commission:"কমিশন (15%)",workers:"শ্রমিক",contractors:"ঠিকাদার",jobs:"কাজ",payments:"পেমেন্ট"},
+pa:{appName:"ਮਜ਼ਦੂਰ ਮਿੱਤਰ",tagline:"ਸਹੀ ਕੰਮ, ਸਹੀ ਮਜ਼ਦੂਰ",getStarted:"ਸ਼ੁਰੂ ਕਰੋ",whoAreYou:"ਤੁਸੀਂ ਕੌਣ ਹੋ?",iAmLabour:"ਮੈਂ ਮਜ਼ਦੂਰ ਹਾਂ",findWork:"ਨੇੜੇ ਕੰਮ ਲੱਭੋ",iAmContractor:"ਮੈਂ ਠੇਕੇਦਾਰ ਹਾਂ",hireWorkers:"ਪ੍ਰੋਜੈਕਟ ਲਈ ਮਜ਼ਦੂਰ",iAmAdmin:"ਐਡਮਿਨ ਪੈਨਲ",manageAll:"ਸਭ ਕੁਝ ਸੰਭਾਲੋ",back:"ਵਾਪਸ",login:"ਲੌਗਇਨ",loginBtn:"ਲੌਗਇਨ ਕਰੋ",newUser:"ਨਵੇਂ ਹੋ?",registerHere:"ਰਜਿਸਟਰ ਕਰੋ",workerReg:"ਮਜ਼ਦੂਰ ਰਜਿਸਟ੍ਰੇਸ਼ਨ",fullName:"ਪੂਰਾ ਨਾਮ",mobileNum:"ਮੋਬਾਈਲ ਨੰਬਰ",age:"ਉਮਰ",gender:"ਲਿੰਗ",primarySkill:"ਮੁੱਖ ਹੁਨਰ",experience:"ਤਜਰਬਾ (ਸਾਲ)",city:"ਸ਼ਹਿਰ/ਇਲਾਕਾ",pincode:"ਪਿੰਨ ਕੋਡ",aadhaar:"ਆਧਾਰ (ਆਖਰੀ 4 ਅੰਕ)",dailyWage:"ਰੋਜ਼ਾਨਾ ਮਜ਼ਦੂਰੀ (₹)",bankAccount:"UPI / ਬੈਂਕ ਖਾਤਾ",registerBtn:"ਰਜਿਸਟਰ ਕਰੋ",contractorReg:"ਠੇਕੇਦਾਰ ਰਜਿਸਟ੍ਰੇਸ਼ਨ",companyName:"ਕੰਪਨੀ ਦਾ ਨਾਮ",email:"ਈਮੇਲ",gstNum:"GST ਨੰਬਰ",logout:"ਲੌਗਆਉਟ",applied:"ਅਪਲਾਈ",working:"ਕੰਮ 'ਤੇ",rating:"ਰੇਟਿੰਗ",earnings:"ਕਮਾਈ",availableJobs:"ਉਪਲਬਧ ਕੰਮ",myApplications:"ਮੇਰੀਆਂ ਅਰਜ਼ੀਆਂ",profile:"ਪ੍ਰੋਫਾਈਲ",postedJobs:"ਪੋਸਟ ਕੀਤੇ ਕੰਮ",applications:"ਅਰਜ਼ੀਆਂ",activeWorkers:"ਸਰਗਰਮ ਮਜ਼ਦੂਰ",totalSpent:"ਕੁੱਲ ਖਰਚ",postNewJob:"ਨਵਾਂ ਕੰਮ ਪੋਸਟ ਕਰੋ",myJobs:"ਮੇਰੇ ਕੰਮ",browseWorkers:"ਮਜ਼ਦੂਰ ਦੇਖੋ",jobTitle:"ਕੰਮ ਦਾ ਨਾਮ",skillNeeded:"ਕਿਹੜਾ ਹੁਨਰ",workersNeeded:"ਕਿੰਨੇ ਮਜ਼ਦੂਰ",duration:"ਮਿਆਦ (ਦਿਨ)",startDate:"ਸ਼ੁਰੂ ਦੀ ਤਾਰੀਖ",siteAddress:"ਸਾਈਟ ਦਾ ਪਤਾ",description:"ਵੇਰਵਾ",postJobBtn:"ਪੋਸਟ ਕਰੋ",myWallet:"ਮੇਰਾ ਵਾਲਿਟ",totalBalance:"ਕੁੱਲ ਬੈਲੈਂਸ",transactions:"ਲੈਣ-ਦੇਣ",adminPanel:"ਐਡਮਿਨ ਪੈਨਲ",totalWorkers:"ਮਜ਼ਦੂਰ",totalContractors:"ਠੇਕੇਦਾਰ",totalJobs:"ਕੰਮ",commission:"ਕਮਿਸ਼ਨ (15%)",workers:"ਮਜ਼ਦੂਰ",contractors:"ਠੇਕੇਦਾਰ",jobs:"ਕੰਮ",payments:"ਪੇਮੈਂਟ"}
+};
+
+let currentLang=localStorage.getItem('lang')||'en';
+
+function changeLanguage(lang){currentLang=lang;localStorage.setItem('lang',lang);applyTranslations();}
+
+function applyTranslations(){
+const t=translations[currentLang]||translations.en;
+document.querySelectorAll('[data-i18n]').forEach(el=>{
+const key=el.getAttribute('data-i18n');
+if(t[key])el.textContent=t[key];
+});
+document.getElementById('langSelect').value=currentLang;
+}
+
+let db={labour:JSON.parse(localStorage.getItem('labour')||'[]'),contractors:JSON.parse(localStorage.getItem('contractors')||'[]'),jobs:JSON.parse(localStorage.getItem('jobs')||'[]'),applications:JSON.parse(localStorage.getItem('applications')||'[]'),transactions:JSON.parse(localStorage.getItem('transactions')||'[]')};
+let currentUser=JSON.parse(localStorage.getItem('currentUser')||'null');
+let currentRole=localStorage.getItem('currentRole')||'';
+
+function saveDB(){
+localStorage.setItem('labour',JSON.stringify(db.labour));
+localStorage.setItem('contractors',JSON.stringify(db.contractors));
+localStorage.setItem('jobs',JSON.stringify(db.jobs));
+localStorage.setItem('applications',JSON.stringify(db.applications));
+localStorage.setItem('transactions',JSON.stringify(db.transactions));
+}
+
+function showToast(msg,duration=3000){
+const toast=document.getElementById('toast');
+toast.textContent=msg;
+toast.classList.add('show');
+setTimeout(()=>toast.classList.remove('show'),duration);
+}
+
+function showScreen(screenId){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(screenId).classList.add('active');
+window.scrollTo(0,0);
+}
+
+function selectRole(role){
+currentRole=role;
+localStorage.setItem('currentRole',role);
+if(role==='admin'){showScreen('adminDashboard');loadAdminData();}
+else{showScreen('login');}
+}
+
+function showRegister(){
+if(currentRole==='labour')showScreen('labourRegister');
+else if(currentRole==='contractor')showScreen('contractorRegister');
+}
+
+function loginUser(e){
+e.preventDefault();
+const phone=document.getElementById('loginPhone').value;
+let user;
+if(currentRole==='labour')user=db.labour.find(l=>l.phone===phone);
+else user=db.contractors.find(c=>c.phone===phone);
+if(user){
+currentUser=user;
+localStorage.setItem('currentUser',JSON.stringify(user));
+if(currentRole==='labour'){showScreen('labourDashboard');loadLabourDashboard();}
+else{showScreen('contractorDashboard');loadContractorDashboard();}
+showToast('✅ Login successful!');
+}else{
+showToast('❌ Number not registered. Please register first.');
+setTimeout(()=>showRegister(),1500);
+}
+}
+
+function logout(){
+currentUser=null;currentRole='';
+localStorage.removeItem('currentUser');
+localStorage.removeItem('currentRole');
+showScreen('roleSelect');
+showToast('👋 Logged out');
+}
+
+function registerLabour(e){
+e.preventDefault();
+const phone=document.getElementById('lPhone').value;
+if(db.labour.find(l=>l.phone===phone)){showToast('❌ Number already registered!');return;}
+const newLabour={id:Date.now(),name:document.getElementById('lName').value,phone:phone,age:document.getElementById('lAge').value,gender:document.getElementById('lGender').value,skill:document.getElementById('lSkill').value,experience:document.getElementById('lExp').value,location:document.getElementById('lLocation').value,pincode:document.getElementById('lPincode').value,aadhaar:'XXXX-XXXX-'+document.getElementById('lAadhaar').value,wage:document.getElementById('lWage').value,upi:document.getElementById('lUpi').value,rating:5.0,wallet:0,verified:true,joinedDate:new Date().toLocaleDateString()};
+db.labour.push(newLabour);saveDB();
+currentUser=newLabour;
+localStorage.setItem('currentUser',JSON.stringify(newLabour));
+showToast('🎉 Registration successful!');
+showScreen('labourDashboard');loadLabourDashboard();
+}
+
+function registerContractor(e){
+e.preventDefault();
+const phone=document.getElementById('cPhone').value;
+if(db.contractors.find(c=>c.phone===phone)){showToast('❌ Number already registered!');return;}
+const newContractor={id:Date.now(),name:document.getElementById('cName').value,company:document.getElementById('cCompany').value,phone:phone,email:document.getElementById('cEmail').value,location:document.getElementById('cLocation').value,gst:document.getElementById('cGst').value,totalSpent:0,joinedDate:new Date().toLocaleDateString()};
+db.contractors.push(newContractor);saveDB();
+currentUser=newContractor;
+localStorage.setItem('currentUser',JSON.stringify(newContractor));
+showToast('🎉 Registration successful!');
+showScreen('contractorDashboard');loadContractorDashboard();
+}
+
+function postNewJob(e){
+e.preventDefault();
+const newJob={id:Date.now(),contractorId:currentUser.id,contractorName:currentUser.name,contractorPhone:currentUser.phone,title:document.getElementById('jTitle').value,skill:document.getElementById('jSkill').value,workers:parseInt(document.getElementById('jWorkers').value),wage:parseInt(document.getElementById('jWage').value),days:parseInt(document.getElementById('jDays').value),startDate:document.getElementById('jStartDate').value,location:document.getElementById('jLocation').value,pincode:document.getElementById('jPincode').value,description:document.getElementById('jDesc').value,status:'Active',postedDate:new Date().toLocaleDateString()};
+db.jobs.push(newJob);saveDB();
+showToast('✅ Job posted! Workers will be notified.');
+showScreen('contractorDashboard');loadContractorDashboard();
+}
+
+function applyJob(jobId){
+const application={id:Date.now(),jobId:jobId,labourId:currentUser.id,labourName:currentUser.name,labourPhone:currentUser.phone,labourSkill:currentUser.skill,labourRating:currentUser.rating,status:'Applied',appliedDate:new Date().toLocaleDateString()};
+db.applications.push(application);saveDB();
+showToast('✅ Application sent!');
+loadLabourDashboard();
+}
+
+function acceptApplication(appId){
+const app=db.applications.find(a=>a.id===appId);
+if(app){
+app.status='Accepted';
+const job=db.jobs.find(j=>j.id===app.jobId);
+const totalAmount=job.wage*job.days;
+db.transactions.push({id:Date.now(),type:'Job Payment',labourId:app.labourId,contractorId:job.contractorId,jobId:job.id,amount:totalAmount,commission:totalAmount*0.15,netAmount:totalAmount*0.85,date:new Date().toLocaleDateString(),status:'Pending'});
+saveDB();
+showToast('✅ Worker accepted!');
+loadContractorDashboard();
+}
+}
+
+function rejectApplication(appId){
+const app=db.applications.find(a=>a.id===appId);
+if(app){app.status='Rejected';saveDB();showToast('Application rejected');loadContractorDashboard();}
+}
+
+function completeJob(jobId){
+const job=db.jobs.find(j=>j.id===jobId);
+if(job){
+job.status='Completed';
+db.transactions.forEach(tx=>{
+if(tx.jobId===jobId&&tx.status==='Pending'){
+tx.status='Paid';
+const labour=db.labour.find(l=>l.id===tx.labourId);
+if(labour)labour.wallet=(labour.wallet||0)+tx.netAmount;
+const contractor=db.contractors.find(c=>c.id===tx.contractorId);
+if(contractor)contractor.totalSpent=(contractor.totalSpent||0)+tx.amount;
+}
+});
+saveDB();
+showToast('✅ Job completed! Payments processed.');
+loadContractorDashboard();
+}
+}
+
+function switchTab(tab,btn){
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+btn.classList.add('active');
+document.getElementById(tab+'Tab').classList.add('active');
+if(tab==='myApps')loadMyApplications();
+if(tab==='profile')loadProfile();
+if(tab==='browseLabour')filterLabour();
+}
+
+function switchAdminTab(tab,btn){
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+btn.classList.add('active');
+document.getElementById(tab+'AdminTab').classList.add('active');
+}
+
+function loadLabourDashboard(){
+document.getElementById('labourName').textContent=currentUser.name;
+document.getElementById('labourSkillDisp').textContent=currentUser.skill+' • '+currentUser.location;
+document.getElementById('myRating').textContent=currentUser.rating||'5.0';
+document.getElementById('walletBalance').textContent=Math.round(currentUser.wallet||0);
+const myApps=db.applications.filter(a=>a.labourId===currentUser.id);
+document.getElementById('appliedCount').textContent=myApps.length;
+document.getElementById('workingCount').textContent=myApps.filter(a=>a.status==='Accepted').length;
+displayJobs();
+}
+
+function displayJobs(){
+const search=document.getElementById('jobSearch')?.value.toLowerCase()||'';
+const matchingJobs=db.jobs.filter(j=>j.skill===currentUser.skill&&j.status==='Active'&&(j.title.toLowerCase().includes(search)||j.location.toLowerCase().includes(search)));
+const jobsList=document.getElementById('jobsList');
+if(matchingJobs.length===0){jobsList.innerHTML='<div class="empty-state">📭 No jobs available. Check back soon!</div>';return;}
+jobsList.innerHTML=matchingJobs.map(job=>{
+const applied=db.applications.find(a=>a.jobId===job.id&&a.labourId===currentUser.id);
+return `<div class="job-card"><h4>${job.title}</h4><p>👷 ${job.skill}</p><p>📍 ${job.location} (${job.pincode})</p><p>📅 ${job.days} days | 👥 ${job.workers} workers needed</p><p>📆 Start: ${job.startDate}</p><p class="wage">💰 ₹${job.wage}/day (Total: ₹${job.wage*job.days})</p><p>👔 ${job.contractorName}</p>${job.description?`<p>📝 ${job.description}</p>`:''}${applied?`<button class="applied-btn">✓ ${applied.status}</button>`:`<button class="apply-btn" onclick="applyJob(${job.id})">Apply Now</button>`}</div>`;
+}).join('');
+}
+
+function filterJobs(){displayJobs();}
+
+function loadMyApplications(){
+const myApps=db.applications.filter(a=>a.labourId===currentUser.id);
+const list=document.getElementById('myApplicationsList');
+if(myApps.length===0){list.innerHTML='<div class="empty-state">📋 No applications yet</div>';return;}
+list.innerHTML=myApps.map(app=>{
+const job=db.jobs.find(j=>j.id===app.jobId);
+if(!job)return '';
+const badgeClass=app.status==='Accepted'?'badge-active':app.status==='Rejected'?'badge-rejected':'badge-pending';
+return `<div class="job-card"><h4>${job.title}</h4><p>📍 ${job.location}</p><p class="wage">💰 ₹${job.wage}/day × ${job.days} days = ₹${job.wage*job.days}</p><p>👔 ${job.contractorName} - <a href="tel:${job.contractorPhone}">${job.contractorPhone}</a></p><span class="badge ${badgeClass}">${app.status}</span></div>`;
+}).join('');
+}
+
+function loadProfile(){
+const info=document.getElementById('profileInfo');
+info.innerHTML=`<div class="profile-item"><span class="label">Name</span><span class="value">${currentUser.name}</span></div><div class="profile-item"><span class="label">Phone</span><span class="value">${currentUser.phone}</span></div><div class="profile-item"><span class="label">Age</span><span class="value">${currentUser.age}</span></div><div class="profile-item"><span class="label">Gender</span><span class="value">${currentUser.gender}</span></div><div class="profile-item"><span class="label">Skill</span><span class="value">${currentUser.skill}</span></div><div class="profile-item"><span class="label">Experience</span><span class="value">${currentUser.experience} years</span></div><div class="profile-item"><span class="label">Location</span><span class="value">${currentUser.location}</span></div><div class="profile-item"><span class="label">Pincode</span><span class="value">${currentUser.pincode}</span></div><div class="profile-item"><span class="label">Aadhaar</span><span class="value">${currentUser.aadhaar}</span></div><div class="profile-item"><span class="label">Daily Wage</span><span class="value">₹${currentUser.wage}</span></div><div class="profile-item"><span class="label">UPI/Bank</span><span class="value">${currentUser.upi}</span></div><div class="profile-item"><span class="label">Rating</span><span class="value">⭐ ${currentUser.rating}</span></div>`;
+}
+
+function showWallet(){
+document.getElementById('walletTotalAmount').textContent=Math.round(currentUser.wallet||0);
+const myTx=db.transactions.filter(t=>t.labourId===currentUser.id);
+const list=document.getElementById('transactionList');
+if(myTx.length===0){list.innerHTML='<div class="empty-state">💸 No transactions yet</div>';}
+else{list.innerHTML=myTx.map(tx=>`<div class="transaction"><div><div><strong>${tx.type}</strong></div><small>${tx.date} • ${tx.status}</small></div><div class="amount-credit">+₹${Math.round(tx.netAmount)}</div></div>`).join('');}
+showScreen('walletScreen');
+}
+
+function loadContractorDashboard(){
+document.getElementById('contractorName').textContent=currentUser.name;
+document.getElementById('contractorCompany').textContent=currentUser.company||currentUser.location;
+const myJobs=db.jobs.filter(j=>j.contractorId===currentUser.id);
+document.getElementById('myJobsCount').textContent=myJobs.length;
+const myJobIds=myJobs.map(j=>j.id);
+const allApps=db.applications.filter(a=>myJobIds.includes(a.jobId));
+document.getElementById('totalApps').textContent=allApps.length;
+document.getElementById('activeWorkers').textContent=allApps.filter(a=>a.status==='Accepted').length;
+document.getElementById('totalSpent').textContent=Math.round(currentUser.totalSpent||0);
+const myJobsList=document.getElementById('myJobsList');
+if(myJobs.length===0){myJobsList.innerHTML='<div class="empty-state">📋 No jobs posted yet</div>';}
+else{myJobsList.innerHTML=myJobs.map(job=>{
+const apps=db.applications.filter(a=>a.jobId===job.id);
+return `<div class="job-card"><h4>${job.title} <span class="badge badge-${job.status==='Active'?'active':'completed'}">${job.status}</span></h4><p>👷 ${job.skill} | 💰 ₹${job.wage}/day × ${job.days} days</p><p>📍 ${job.location}</p><p><strong>${apps.length} applications</strong></p>${apps.map(a=>`<div style="background:#f8f9fa;padding:10px;margin:8px 0;border-radius:6px;"><strong>${a.labourName}</strong> ⭐${a.labourRating}<br><small>📞 <a href="tel:${a.labourPhone}">${a.labourPhone}</a> | <span class="badge badge-${a.status==='Accepted'?'active':a.status==='Rejected'?'rejected':'pending'}">${a.status}</span></small>${a.status==='Applied'?`<div style="margin-top:8px;"><button class="accept-btn" onclick="acceptApplication(${a.id})">✓ Accept</button><button class="reject-btn" onclick="rejectApplication(${a.id})">✗ Reject</button></div>`:''}</div>`).join('')}${job.status==='Active'&&apps.some(a=>a.status==='Accepted')?`<button class="complete-btn" onclick="completeJob(${job.id})">✓ Mark Complete & Pay</button>`:''}</div>`;
+}).join('');}
+filterLabour();
+}
+
+function filterLabour(){
+const search=document.getElementById('labourSearch')?.value.toLowerCase()||'';
+const skill=document.getElementById('skillFilter')?.value||'';
+let filtered=db.labour;
+if(search)filtered=filtered.filter(l=>l.name.toLowerCase().includes(search)||l.location.toLowerCase().includes(search));
+if(skill)filtered=filtered.filter(l=>l.skill===skill);
+const container=document.getElementById('availableLabour');
+if(!container)return;
+if(filtered.length===0){container.innerHTML='<div class="empty-state">No workers found</div>';}
+else{container.innerHTML=filtered.map(l=>`<div class="labour-card"><div class="labour-info"><h4>${l.name} ${l.verified?'✅':''}</h4><p>👷 ${l.skill} | ${l.experience} years exp</p><p>📍 ${l.location} | ⭐ ${l.rating} | 💰 ₹${l.wage}/day</p></div><a href="tel:${l.phone}" class="call-btn">📞 Call</a></div>`).join('');}
+}
+
+function loadAdminData(){
+document.getElementById('totalLabour').textContent=db.labour.length;
+document.getElementById('totalContractors').textContent=db.contractors.length;
+document.getElementById('totalJobs').textContent=db.jobs.length;
+let totalRevenue=0;
+db.transactions.forEach(tx=>{if(tx.status==='Paid')totalRevenue+=tx.commission;});
+document.getElementById('totalRevenue').textContent=Math.round(totalRevenue);
+document.getElementById('allLabour').innerHTML=db.labour.length===0?'<div class="empty-state">No workers</div>':db.labour.map(l=>`<div class="labour-card"><div class="labour-info"><h4>${l.name} (${l.phone}) ${l.verified?'✅':''}</h4><p>${l.skill} | ${l.location} | ⭐ ${l.rating} | Wallet: ₹${Math.round(l.wallet||0)}</p></div></div>`).join('');
+document.getElementById('allContractors').innerHTML=db.contractors.length===0?'<div class="empty-state">No contractors</div>':db.contractors.map(c=>`<div class="labour-card"><div class="labour-info"><h4>${c.name} (${c.phone})</h4><p>${c.company||'No Company'} | ${c.location} | Spent: ₹${Math.round(c.totalSpent||0)}</p></div></div>`).join('');
+document.getElementById('allJobs').innerHTML=db.jobs.length===0?'<div class="empty-state">No jobs</div>':db.jobs.map(j=>`<div class="job-card"><h4>${j.title} <span class="badge badge-${j.status==='Active'?'active':'completed'}">${j.status}</span></h4><p>${j.skill} | ${j.workers} workers | ₹${j.wage}/day × ${j.days} days</p><p>By: ${j.contractorName} | 📍 ${j.location}</p><p class="wage">Total: ₹${j.wage*j.workers*j.days}</p><p style="color:#28a745;"><strong>Commission (15%): ₹${Math.round(j.wage*j.workers*j.days*0.15)}</strong></p></div>`).join('');
+document.getElementById('allPayments').innerHTML=db.transactions.length===0?'<div class="empty-state">No payments</div>':db.transactions.map(tx=>{const labour=db.labour.find(l=>l.id===tx.labourId);return `<div class="job-card"><h4>${tx.type} <span class="badge badge-${tx.status==='Paid'?'active':'pending'}">${tx.status}</span></h4><p>Worker: ${labour?labour.name:'Unknown'}</p><p>Total: ₹${tx.amount} | Worker Got: ₹${Math.round(tx.netAmount)}</p><p style="color:#28a745;"><strong>Our Commission: ₹${Math.round(tx.commission)}</strong></p><small>${tx.date}</small></div>`;}).join('');
+}
+
+window.onload=function(){
+applyTranslations();
+if(currentUser&&currentRole){
+if(currentRole==='labour'){showScreen('labourDashboard');loadLabourDashboard();}
+else if(currentRole==='contractor'){showScreen('contractorDashboard');loadContractorDashboard();}
+else if(currentRole==='admin'){showScreen('adminDashboard');loadAdminData();}
+}
+};
+</script>
+</body>
+</html>
