@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mazdoor Connect - MVP 1.0</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#FF6B35">
+</head>
+<body>
+    <!-- Language Selector (Top) -->
+    <div id="langBar" class="lang-bar">
+        <select id="langSelect" onchange="changeLanguage(this.value)">
+            <option value="en">🇬🇧 English</option>
+            <option value="hi">🇮🇳 हिंदी</option>
+            <option value="mr">🇮🇳 मराठी</option>
+            <option value="gu">🇮🇳 ગુજરાતી</option>
+            <option value="ta">🇮🇳 தமிழ்</option>
+            <option value="te">🇮🇳 తెలుగు</option>
+            <option value="bn">🇮🇳 বাংলা</option>
+            <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
+        </select>
+        <span class="version-tag">MVP 1.0</span>
+    </div>
+
+    <!-- Splash Screen -->
+    <div id="splash" class="screen active">
+        <div class="splash-content">
+            <div class="logo-anim">🔨</div>
+            <h1 data-i18n="appName">Mazdoor Connect</h1>
+            <p data-i18n="tagline">Right Work, Right Worker</p>
+            <button onclick="showScreen('roleSelect')" class="btn-primary" data-i18n="getStarted">Get Started</button>
+        </div>
+    </div>
+
+    <!-- Role Selection -->
+    <div id="roleSelect" class="screen">
+        <div class="container">
+            <h2 data-i18n="whoAreYou">Who are you?</h2>
+            <div class="role-card" onclick="selectRole('labour')">
+                <div class="role-icon">👷</div>
+                <h3 data-i18n="iAmLabour">I am a Worker</h3>
+                <p data-i18n="findWork">Find work near me</p>
+            </div>
+            <div class="role-card" onclick="selectRole('contractor')">
+                <div class="role-icon">👔</div>
+                <h3 data-i18n="iAmContractor">I am a Contractor</h3>
+                <p data-i18n="hireWorkers">Hire workers for projects</p>
+            </div>
+            <div class="role-card" onclick="selectRole('admin')">
+                <div class="role-icon">⚙️</div>
+                <h3 data-i18n="iAmAdmin">Admin Panel</h3>
+                <p data-i18n="manageAll">Manage everything</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login" class="screen">
+        <div class="container">
+            <button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
+            <h2 data-i18n="login">Login</h2>
+            <form onsubmit="loginUser(event)">
+                <input type="tel" id="loginPhone" data-i18n-placeholder="mobileNum" placeholder="Mobile Number" pattern="[0-9]{10}" required>
+                <button type="submit" class="btn-primary" data-i18n="loginBtn">Login</button>
+            </form>
+            <p class="text-center mt-20"><span data-i18n="newUser">New User?</span> <a href="#" onclick="showRegister()" data-i18n="registerHere">Register Here</a></p>
+        </div>
+    </div>
+
+    <!-- Labour Registration -->
+    <div id="labourRegister" class="screen">
+        <div class="container">
+            <button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
+            <h2 data-i18n="workerReg">Worker Registration</h2>
+            <form onsubmit="registerLabour(event)">
+                <label data-i18n="fullName">Full Name</label>
+                <input type="text" id="lName" required>
+                
+                <label data-i18n="mobileNum">Mobile Number</label>
+                <input type="tel" id="lPhone" pattern="[0-9]{10}" required>
+                
+                <label data-i18n="age">Age</label>
+                <input type="number" id="lAge" min="18" max="65" required>
+                
+                <label data-i18n="gender">Gender</label>
+                <select id="lGender" required>
+                    <option value="">--</option>
+                    <option value="Male" data-i18n="male">Male</option>
+                    <option value="Female" data-i18n="female">Female</option>
+                </select>
+                
+                <label data-i18n="primarySkill">Primary Skill</label>
+                <select id="lSkill" required>
+                    <option value="">--</option>
+                    <option value="Helper" data-i18n="helper">Helper</option>
+                    <option value="Mason" data-i18n="mason">Mason</option>
+                    <option value="Carpenter" data-i18n="carpenter">Carpenter</option>
+                    <option value="Painter" data-i18n="painter">Painter</option>
+                    <option value="Electrician" data-i18n="electrician">Electrician</option>
+                    <option value="Plumber" data-i18n="plumber">Plumber</option>
+                    <option value="Welder" data-i18n="welder">Welder</option>
+                    <option value="Tile Worker" data-i18n="tileWorker">Tile Worker</option>
+                    <option value="POP Worker" data-i18n="popWorker">POP Worker</option>
+                    <option value="Steel Bender" data-i18n="steelBender">Steel Bender</option>
+                </select>
+                
+                <label data-i18n="experience">Experience (Years)</label>
+                <input type="number" id="lExp" min="0" required>
+                
+                <label data-i18n="city">City/Area</label>
+                <input type="text" id="lLocation" required>
+                
+                <label data-i18n="pincode">Pincode</label>
+                <input type="text" id="lPincode" pattern="[0-9]{6}" required>
+                
+                <label data-i18n="aadhaar">Aadhaar Number (Last 4 digits)</label>
+                <input type="text" id="lAadhaar" pattern="[0-9]{4}" maxlength="4" required>
+                
+                <label data-i18n="dailyWage">Expected Daily Wage (₹)</label>
+                <input type="number" id="lWage" required>
+                
+                <label data-i18n="bankAccount">Bank Account / UPI ID</label>
+                <input type="text" id="lUpi" placeholder="example@upi" required>
+                
+                <button type="submit" class="btn-primary" data-i18n="registerBtn">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contractor Registration -->
+    <div id="contractorRegister" class="screen">
+        <div class="container">
+            <button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
+            <h2 data-i18n="contractorReg">Contractor Registration</h2>
+            <form onsubmit="registerContractor(event)">
+                <label data-i18n="fullName">Full Name</label>
+                <input type="text" id="cName" required>
+                
+                <label data-i18n="companyName">Company Name (Optional)</label>
+                <input type="text" id="cCompany">
+                
+                <label data-i18n="mobileNum">Mobile Number</label>
+                <input type="tel" id="cPhone" pattern="[0-9]{10}" required>
+                
+                <label data-i18n="email">Email</label>
+                <input type="email" id="cEmail">
+                
+                <label data-i18n="city">City</label>
+                <input type="text" id="cLocation" required>
+                
+                <label data-i18n="gstNum">GST Number (Optional)</label>
+                <input type="text" id="cGst">
+                
+                <button type="submit" class="btn-primary" data-i18n="registerBtn">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Labour Dashboard -->
+    <div id="labourDashboard" class="screen">
+        <div class="header">
+            <div>
+                <h2>👋 <span id="labourName"></span></h2>
+                <small id="labourSkillDisp"></small>
+            </div>
+            <button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+        </div>
+        <div class="container">
+            <div class="stats">
+                <div class="stat-card" onclick="showMyApplications()">
+                    <h3 id="appliedCount">0</h3>
+                    <p data-i18n="applied">Applied</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="workingCount">0</h3>
+                    <p data-i18n="working">Working</p>
+                </div>
+                <div class="stat-card">
+                    <h3>⭐ <span id="myRating">5.0</span></h3>
+                    <p data-i18n="rating">Rating</p>
+                </div>
+                <div class="stat-card" onclick="showWallet()">
+                    <h3>₹<span id="walletBalance">0</span></h3>
+                    <p data-i18n="earnings">Earnings</p>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('jobs', this)" data-i18n="availableJobs">Available Jobs</button>
+                <button class="tab-btn" onclick="switchTab('myApps', this)" data-i18n="myApplications">My Applications</button>
+                <button class="tab-btn" onclick="switchTab('profile', this)" data-i18n="profile">Profile</button>
+            </div>
+            
+            <div id="jobsTab" class="tab-content active">
+                <input type="text" id="jobSearch" placeholder="🔍 Search jobs..." onkeyup="filterJobs()" class="search-box">
+                <div id="jobsList"></div>
+            </div>
+            
+            <div id="myAppsTab" class="tab-content">
+                <div id="myApplicationsList"></div>
+            </div>
+            
+            <div id="profileTab" class="tab-content">
+                <div id="profileInfo"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contractor Dashboard -->
+    <div id="contractorDashboard" class="screen">
+        <div class="header">
+            <div>
+                <h2>👋 <span id="contractorName"></span></h2>
+                <small id="contractorCompany"></small>
+            </div>
+            <button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+        </div>
+        <div class="container">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 id="myJobsCount">0</h3>
+                    <p data-i18n="postedJobs">Posted Jobs</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="totalApps">0</h3>
+                    <p data-i18n="applications">Applications</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="activeWorkers">0</h3>
+                    <p data-i18n="activeWorkers">Active Workers</p>
+                </div>
+                <div class="stat-card">
+                    <h3>₹<span id="totalSpent">0</span></h3>
+                    <p data-i18n="totalSpent">Total Spent</p>
+                </div>
+            </div>
+            
+            <button class="btn-primary" onclick="showScreen('postJob')">➕ <span data-i18n="postNewJob">Post New Job</span></button>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('myJobs', this)" data-i18n="myJobs">My Jobs</button>
+                <button class="tab-btn" onclick="switchTab('browseLabour', this)" data-i18n="browseWorkers">Browse Workers</button>
+            </div>
+            
+            <div id="myJobsTab" class="tab-content active">
+                <div id="myJobsList"></div>
+            </div>
+            
+            <div id="browseLabourTab" class="tab-content">
+                <input type="text" id="labourSearch" placeholder="🔍 Search workers..." onkeyup="filterLabour()" class="search-box">
+                <select id="skillFilter" onchange="filterLabour()" class="search-box">
+                    <option value="">All Skills</option>
+                    <option value="Helper">Helper</option>
+                    <option value="Mason">Mason</option>
+                    <option value="Carpenter">Carpenter</option>
+                    <option value="Painter">Painter</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Welder">Welder</option>
+                </select>
+                <div id="availableLabour"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post Job -->
+    <div id="postJob" class="screen">
+        <div class="container">
+            <button class="back-btn" onclick="showScreen('contractorDashboard')">← <span data-i18n="back">Back</span></button>
+            <h2 data-i18n="postNewJob">Post New Job</h2>
+            <form onsubmit="postNewJob(event)">
+                <label data-i18n="jobTitle">Job Title</label>
+                <input type="text" id="jTitle" required>
+                
+                <label data-i18n="skillNeeded">Skill Needed</label>
+                <select id="jSkill" required>
+                    <option value="">--</option>
+                    <option value="Helper">Helper</option>
+                    <option value="Mason">Mason</option>
+                    <option value="Carpenter">Carpenter</option>
+                    <option value="Painter">Painter</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Welder">Welder</option>
+                    <option value="Tile Worker">Tile Worker</option>
+                    <option value="POP Worker">POP Worker</option>
+                    <option value="Steel Bender">Steel Bender</option>
+                </select>
+                
+                <label data-i18n="workersNeeded">Workers Needed</label>
+                <input type="number" id="jWorkers" min="1" required>
+                
+                <label data-i18n="dailyWage">Daily Wage (₹)</label>
+                <input type="number" id="jWage" required>
+                
+                <label data-i18n="duration">Duration (Days)</label>
+                <input type="number" id="jDays" min="1" required>
+                
+                <label data-i18n="startDate">Start Date</label>
+                <input type="date" id="jStartDate" required>
+                
+                <label data-i18n="siteAddress">Site Address</label>
+                <input type="text" id="jLocation" required>
+                
+                <label data-i18n="pincode">Pincode</label>
+                <input type="text" id="jPincode" pattern="[0-9]{6}" required>
+                
+                <label data-i18n="description">Description</label>
+                <textarea id="jDesc" rows="3"></textarea>
+                
+                <button type="submit" class="btn-primary" data-i18n="postJobBtn">Post Job</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Job Details with Applications -->
+    <div id="jobDetails" class="screen">
+        <div class="container">
+            <button class="back-btn" onclick="showScreen('contractorDashboard')">← <span data-i18n="back">Back</span></button>
+            <div id="jobDetailsContent"></div>
+        </div>
+    </div>
+
+    <!-- Wallet Screen -->
+    <div id="walletScreen" class="screen">
+        <div class="container">
+            <button class="back-btn" onclick="showScreen('labourDashboard')">← <span data-i18n="back">Back</span></button>
+            <h2>💰 <span data-i18n="myWallet">My Wallet</span></h2>
+            <div class="wallet-card">
+                <p data-i18n="totalBalance">Total Balance</p>
+                <h1>₹<span id="walletTotalAmount">0</span></h1>
+            </div>
+            <h3 data-i18n="transactions">Transactions</h3>
+            <div id="transactionList"></div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="screen">
+        <div class="header">
+            <h2>⚙️ <span data-i18n="adminPanel">Admin Panel</span></h2>
+            <button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+        </div>
+        <div class="container">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 id="totalLabour">0</h3>
+                    <p data-i18n="totalWorkers">Workers</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="totalContractors">0</h3>
+                    <p data-i18n="totalContractors">Contractors</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="totalJobs">0</h3>
+                    <p data-i18n="totalJobs">Jobs</p>
+                </div>
+                <div class="stat-card">
+                    <h3>₹<span id="totalRevenue">0</span></h3>
+                    <p data-i18n="commission">Commission (15%)</p>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchAdminTab('workers', this)" data-i18n="workers">Workers</button>
+                <button class="tab-btn" onclick="switchAdminTab('contractors', this)" data-i18n="contractors">Contractors</button>
+                <button class="tab-btn" onclick="switchAdminTab('jobs', this)" data-i18n="jobs">Jobs</button>
+                <button class="tab-btn" onclick="switchAdminTab('payments', this)" data-i18n="payments">Payments</button>
+            </div>
+            
+            <div id="workersAdminTab" class="tab-content active">
+                <div id="allLabour"></div>
+            </div>
+            <div id="contractorsAdminTab" class="tab-content">
+                <div id="allContractors"></div>
+            </div>
+            <div id="jobsAdminTab" class="tab-content">
+                <div id="allJobs"></div>
+            </div>
+            <div id="paymentsAdminTab" class="tab-content">
+                <div id="allPayments"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
