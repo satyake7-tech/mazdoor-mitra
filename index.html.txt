@@ -1,392 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mazdoor Connect - MVP 1.0</title>
-    <link rel="stylesheet" href="style.css">
-    <meta name="theme-color" content="#FF6B35">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mazdoor Mitra - मज़दूर मित्र</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#f0f2f5;color:#333;min-height:100vh;padding-top:45px}
+.lang-bar{position:fixed;top:0;left:0;right:0;background:#2c3e50;color:white;padding:8px 15px;display:flex;justify-content:space-between;align-items:center;z-index:1000;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
+.lang-bar select{background:#34495e;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:0.9em}
+.version-tag{background:#FF6B35;padding:3px 10px;border-radius:10px;font-size:0.8em;font-weight:bold}
+.screen{display:none;min-height:100vh;animation:slideIn 0.3s}
+.screen.active{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.container{padding:20px;max-width:700px;margin:0 auto}
+#splash{background:linear-gradient(135deg,#FF6B35,#F7931E);align-items:center;justify-content:center;color:white;min-height:calc(100vh - 45px)}
+#splash.active{display:flex}
+.splash-content{text-align:center;padding:40px}
+.splash-content h1{font-size:2.8em;margin-bottom:15px}
+.splash-content p{font-size:1.2em;margin-bottom:40px;opacity:0.95}
+.logo-anim{font-size:5em;margin-bottom:20px;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.btn-primary{background:linear-gradient(135deg,#FF6B35,#F7931E);color:white;border:none;padding:15px 30px;border-radius:10px;font-size:1.05em;font-weight:bold;cursor:pointer;width:100%;margin:10px 0;box-shadow:0 4px 15px rgba(255,107,53,0.4)}
+.back-btn{background:none;border:none;color:#FF6B35;font-size:1em;cursor:pointer;margin-bottom:15px;font-weight:bold;padding:5px 0}
+.logout-btn{background:rgba(255,255,255,0.2);color:white;border:1px solid white;padding:8px 15px;border-radius:5px;cursor:pointer;font-size:0.9em}
+.role-card{background:white;padding:25px;margin:15px 0;border-radius:15px;text-align:center;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.08);transition:all 0.3s;border:2px solid transparent}
+.role-card:hover{transform:translateY(-5px);border-color:#FF6B35}
+.role-icon{font-size:4em;margin-bottom:10px}
+.role-card h3{color:#FF6B35;margin-bottom:5px;font-size:1.4em}
+form label{display:block;margin-top:12px;margin-bottom:5px;color:#555;font-weight:600;font-size:0.9em}
+form input,form select,form textarea{width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;font-size:1em;background:white}
+form input:focus,form select:focus{border-color:#FF6B35;outline:none}
+.search-box{width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;font-size:1em;margin-bottom:10px;background:white}
+.header{background:linear-gradient(135deg,#FF6B35,#F7931E);color:white;padding:20px;display:flex;justify-content:space-between;align-items:center}
+.header h2{font-size:1.3em}
+.header small{opacity:0.9}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+.stat-card{background:white;padding:18px;border-radius:12px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,0.08);cursor:pointer}
+.stat-card h3{color:#FF6B35;font-size:1.8em;margin-bottom:5px}
+.stat-card p{color:#777;font-size:0.85em}
+.tabs{display:flex;background:white;border-radius:10px;overflow:hidden;margin:20px 0;box-shadow:0 2px 5px rgba(0,0,0,0.05);overflow-x:auto}
+.tab-btn{flex:1;background:white;border:none;padding:12px;cursor:pointer;font-weight:600;color:#777;white-space:nowrap;font-size:0.9em}
+.tab-btn.active{background:#FF6B35;color:white}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.job-card{background:white;padding:18px;margin:12px 0;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,0.05);border-left:4px solid #FF6B35}
+.job-card h4{color:#333;margin-bottom:10px;font-size:1.15em}
+.job-card p{margin:4px 0;color:#666;font-size:0.9em}
+.job-card .wage{color:#28a745;font-weight:bold;font-size:1.15em;margin:8px 0}
+.apply-btn,.accept-btn{background:#28a745;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;margin-top:10px;margin-right:5px;font-weight:600}
+.reject-btn{background:#dc3545;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600}
+.applied-btn{background:#6c757d;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:default}
+.complete-btn{background:#007bff;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:600}
+.labour-card{background:white;padding:15px;margin:10px 0;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center}
+.labour-info h4{color:#333}
+.labour-info p{color:#666;font-size:0.85em}
+.call-btn{background:#25D366;color:white;padding:8px 15px;border-radius:5px;text-decoration:none;font-weight:600;font-size:0.9em}
+.wallet-card{background:linear-gradient(135deg,#28a745,#20c997);color:white;padding:30px;border-radius:15px;text-align:center;margin:20px 0}
+.wallet-card h1{font-size:2.5em;margin-top:10px}
+.transaction{background:white;padding:15px;margin:8px 0;border-radius:10px;display:flex;justify-content:space-between;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+.transaction .amount-credit{color:#28a745;font-weight:bold}
+.profile-item{background:white;padding:12px 15px;margin:8px 0;border-radius:8px;display:flex;justify-content:space-between;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+.profile-item .label{color:#777;font-size:0.9em}
+.profile-item .value{color:#333;font-weight:600}
+.badge{padding:3px 10px;border-radius:12px;font-size:0.8em;font-weight:600}
+.badge-active{background:#d4edda;color:#155724}
+.badge-pending{background:#fff3cd;color:#856404}
+.badge-completed{background:#d1ecf1;color:#0c5460}
+.badge-rejected{background:#f8d7da;color:#721c24}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:white;padding:12px 25px;border-radius:25px;z-index:9999;opacity:0;transition:opacity 0.3s}
+.toast.show{opacity:1}
+.text-center{text-align:center}
+.mt-20{margin-top:20px}
+h2{margin:15px 0;color:#333;font-size:1.5em}
+h3{margin:20px 0 10px;color:#555;font-size:1.2em}
+a{color:#FF6B35;text-decoration:none;font-weight:600}
+.empty-state{text-align:center;color:#888;padding:30px;background:white;border-radius:10px;margin:15px 0}
+</style>
 </head>
 <body>
-    <!-- Language Selector (Top) -->
-    <div id="langBar" class="lang-bar">
-        <select id="langSelect" onchange="changeLanguage(this.value)">
-            <option value="en">🇬🇧 English</option>
-            <option value="hi">🇮🇳 हिंदी</option>
-            <option value="mr">🇮🇳 मराठी</option>
-            <option value="gu">🇮🇳 ગુજરાતી</option>
-            <option value="ta">🇮🇳 தமிழ்</option>
-            <option value="te">🇮🇳 తెలుగు</option>
-            <option value="bn">🇮🇳 বাংলা</option>
-            <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
-        </select>
-        <span class="version-tag">MVP 1.0</span>
-    </div>
+<div class="lang-bar">
+<select id="langSelect" onchange="changeLanguage(this.value)">
+<option value="en">🇬🇧 English</option>
+<option value="hi">🇮🇳 हिंदी</option>
+<option value="mr">🇮🇳 मराठी</option>
+<option value="gu">🇮🇳 ગુજરાતી</option>
+<option value="ta">🇮🇳 தமிழ்</option>
+<option value="te">🇮🇳 తెలుగు</option>
+<option value="bn">🇮🇳 বাংলা</option>
+<option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
+</select>
+<span class="version-tag">MVP 1.0</span>
+</div>
 
-    <!-- Splash Screen -->
-    <div id="splash" class="screen active">
-        <div class="splash-content">
-            <div class="logo-anim">🔨</div>
-            <h1 data-i18n="appName">Mazdoor Connect</h1>
-            <p data-i18n="tagline">Right Work, Right Worker</p>
-            <button onclick="showScreen('roleSelect')" class="btn-primary" data-i18n="getStarted">Get Started</button>
-        </div>
-    </div>
+<div id="splash" class="screen active">
+<div class="splash-content">
+<div class="logo-anim">🔨</div>
+<h1 data-i18n="appName">Mazdoor Mitra</h1>
+<p data-i18n="tagline">Right Work, Right Worker</p>
+<button onclick="showScreen('roleSelect')" class="btn-primary" data-i18n="getStarted">Get Started</button>
+</div>
+</div>
 
-    <!-- Role Selection -->
-    <div id="roleSelect" class="screen">
-        <div class="container">
-            <h2 data-i18n="whoAreYou">Who are you?</h2>
-            <div class="role-card" onclick="selectRole('labour')">
-                <div class="role-icon">👷</div>
-                <h3 data-i18n="iAmLabour">I am a Worker</h3>
-                <p data-i18n="findWork">Find work near me</p>
-            </div>
-            <div class="role-card" onclick="selectRole('contractor')">
-                <div class="role-icon">👔</div>
-                <h3 data-i18n="iAmContractor">I am a Contractor</h3>
-                <p data-i18n="hireWorkers">Hire workers for projects</p>
-            </div>
-            <div class="role-card" onclick="selectRole('admin')">
-                <div class="role-icon">⚙️</div>
-                <h3 data-i18n="iAmAdmin">Admin Panel</h3>
-                <p data-i18n="manageAll">Manage everything</p>
-            </div>
-        </div>
-    </div>
+<div id="roleSelect" class="screen">
+<div class="container">
+<h2 data-i18n="whoAreYou">Who are you?</h2>
+<div class="role-card" onclick="selectRole('labour')">
+<div class="role-icon">👷</div>
+<h3 data-i18n="iAmLabour">I am a Worker</h3>
+<p data-i18n="findWork">Find work near me</p>
+</div>
+<div class="role-card" onclick="selectRole('contractor')">
+<div class="role-icon">👔</div>
+<h3 data-i18n="iAmContractor">I am a Contractor</h3>
+<p data-i18n="hireWorkers">Hire workers for projects</p>
+</div>
+<div class="role-card" onclick="selectRole('admin')">
+<div class="role-icon">⚙️</div>
+<h3 data-i18n="iAmAdmin">Admin Panel</h3>
+<p data-i18n="manageAll">Manage everything</p>
+</div>
+</div>
+</div>
 
-    <!-- Login Screen -->
-    <div id="login" class="screen">
-        <div class="container">
-            <button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
-            <h2 data-i18n="login">Login</h2>
-            <form onsubmit="loginUser(event)">
-                <input type="tel" id="loginPhone" data-i18n-placeholder="mobileNum" placeholder="Mobile Number" pattern="[0-9]{10}" required>
-                <button type="submit" class="btn-primary" data-i18n="loginBtn">Login</button>
-            </form>
-            <p class="text-center mt-20"><span data-i18n="newUser">New User?</span> <a href="#" onclick="showRegister()" data-i18n="registerHere">Register Here</a></p>
-        </div>
-    </div>
+<div id="login" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
+<h2 data-i18n="login">Login</h2>
+<form onsubmit="loginUser(event)">
+<input type="tel" id="loginPhone" placeholder="Mobile Number" pattern="[0-9]{10}" required>
+<button type="submit" class="btn-primary" data-i18n="loginBtn">Login</button>
+</form>
+<p class="text-center mt-20"><span data-i18n="newUser">New User?</span> <a href="#" onclick="showRegister()" data-i18n="registerHere">Register Here</a></p>
+</div>
+</div>
 
-    <!-- Labour Registration -->
-    <div id="labourRegister" class="screen">
-        <div class="container">
-            <button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
-            <h2 data-i18n="workerReg">Worker Registration</h2>
-            <form onsubmit="registerLabour(event)">
-                <label data-i18n="fullName">Full Name</label>
-                <input type="text" id="lName" required>
-                
-                <label data-i18n="mobileNum">Mobile Number</label>
-                <input type="tel" id="lPhone" pattern="[0-9]{10}" required>
-                
-                <label data-i18n="age">Age</label>
-                <input type="number" id="lAge" min="18" max="65" required>
-                
-                <label data-i18n="gender">Gender</label>
-                <select id="lGender" required>
-                    <option value="">--</option>
-                    <option value="Male" data-i18n="male">Male</option>
-                    <option value="Female" data-i18n="female">Female</option>
-                </select>
-                
-                <label data-i18n="primarySkill">Primary Skill</label>
-                <select id="lSkill" required>
-                    <option value="">--</option>
-                    <option value="Helper" data-i18n="helper">Helper</option>
-                    <option value="Mason" data-i18n="mason">Mason</option>
-                    <option value="Carpenter" data-i18n="carpenter">Carpenter</option>
-                    <option value="Painter" data-i18n="painter">Painter</option>
-                    <option value="Electrician" data-i18n="electrician">Electrician</option>
-                    <option value="Plumber" data-i18n="plumber">Plumber</option>
-                    <option value="Welder" data-i18n="welder">Welder</option>
-                    <option value="Tile Worker" data-i18n="tileWorker">Tile Worker</option>
-                    <option value="POP Worker" data-i18n="popWorker">POP Worker</option>
-                    <option value="Steel Bender" data-i18n="steelBender">Steel Bender</option>
-                </select>
-                
-                <label data-i18n="experience">Experience (Years)</label>
-                <input type="number" id="lExp" min="0" required>
-                
-                <label data-i18n="city">City/Area</label>
-                <input type="text" id="lLocation" required>
-                
-                <label data-i18n="pincode">Pincode</label>
-                <input type="text" id="lPincode" pattern="[0-9]{6}" required>
-                
-                <label data-i18n="aadhaar">Aadhaar Number (Last 4 digits)</label>
-                <input type="text" id="lAadhaar" pattern="[0-9]{4}" maxlength="4" required>
-                
-                <label data-i18n="dailyWage">Expected Daily Wage (₹)</label>
-                <input type="number" id="lWage" required>
-                
-                <label data-i18n="bankAccount">Bank Account / UPI ID</label>
-                <input type="text" id="lUpi" placeholder="example@upi" required>
-                
-                <button type="submit" class="btn-primary" data-i18n="registerBtn">Register</button>
-            </form>
-        </div>
-    </div>
+<div id="labourRegister" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
+<h2 data-i18n="workerReg">Worker Registration</h2>
+<form onsubmit="registerLabour(event)">
+<label data-i18n="fullName">Full Name</label>
+<input type="text" id="lName" required>
+<label data-i18n="mobileNum">Mobile Number</label>
+<input type="tel" id="lPhone" pattern="[0-9]{10}" required>
+<label data-i18n="age">Age</label>
+<input type="number" id="lAge" min="18" max="65" required>
+<label data-i18n="gender">Gender</label>
+<select id="lGender" required>
+<option value="">--</option>
+<option value="Male">Male / पुरुष</option>
+<option value="Female">Female / महिला</option>
+</select>
+<label data-i18n="primarySkill">Primary Skill</label>
+<select id="lSkill" required>
+<option value="">--</option>
+<option value="Helper">Helper / हेल्पर</option>
+<option value="Mason">Mason / राज मिस्त्री</option>
+<option value="Carpenter">Carpenter / बढ़ई</option>
+<option value="Painter">Painter / पेंटर</option>
+<option value="Electrician">Electrician / इलेक्ट्रीशियन</option>
+<option value="Plumber">Plumber / प्लंबर</option>
+<option value="Welder">Welder / वेल्डर</option>
+<option value="Tile Worker">Tile Worker / टाइल मिस्त्री</option>
+<option value="POP Worker">POP Worker / POP मिस्त्री</option>
+<option value="Steel Bender">Steel Bender / सरिया बेंडर</option>
+</select>
+<label data-i18n="experience">Experience (Years)</label>
+<input type="number" id="lExp" min="0" required>
+<label data-i18n="city">City/Area</label>
+<input type="text" id="lLocation" required>
+<label data-i18n="pincode">Pincode</label>
+<input type="text" id="lPincode" pattern="[0-9]{6}" required>
+<label data-i18n="aadhaar">Aadhaar (Last 4 digits)</label>
+<input type="text" id="lAadhaar" pattern="[0-9]{4}" maxlength="4" required>
+<label data-i18n="dailyWage">Daily Wage (₹)</label>
+<input type="number" id="lWage" required>
+<label data-i18n="bankAccount">UPI ID / Bank Account</label>
+<input type="text" id="lUpi" placeholder="example@upi" required>
+<button type="submit" class="btn-primary" data-i18n="registerBtn">Register</button>
+</form>
+</div>
+</div>
 
-    <!-- Contractor Registration -->
-    <div id="contractorRegister" class="screen">
-        <div class="container">
-            <button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
-            <h2 data-i18n="contractorReg">Contractor Registration</h2>
-            <form onsubmit="registerContractor(event)">
-                <label data-i18n="fullName">Full Name</label>
-                <input type="text" id="cName" required>
-                
-                <label data-i18n="companyName">Company Name (Optional)</label>
-                <input type="text" id="cCompany">
-                
-                <label data-i18n="mobileNum">Mobile Number</label>
-                <input type="tel" id="cPhone" pattern="[0-9]{10}" required>
-                
-                <label data-i18n="email">Email</label>
-                <input type="email" id="cEmail">
-                
-                <label data-i18n="city">City</label>
-                <input type="text" id="cLocation" required>
-                
-                <label data-i18n="gstNum">GST Number (Optional)</label>
-                <input type="text" id="cGst">
-                
-                <button type="submit" class="btn-primary" data-i18n="registerBtn">Register</button>
-            </form>
-        </div>
-    </div>
+<div id="contractorRegister" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('roleSelect')">← <span data-i18n="back">Back</span></button>
+<h2 data-i18n="contractorReg">Contractor Registration</h2>
+<form onsubmit="registerContractor(event)">
+<label data-i18n="fullName">Full Name</label>
+<input type="text" id="cName" required>
+<label data-i18n="companyName">Company Name (Optional)</label>
+<input type="text" id="cCompany">
+<label data-i18n="mobileNum">Mobile Number</label>
+<input type="tel" id="cPhone" pattern="[0-9]{10}" required>
+<label data-i18n="email">Email</label>
+<input type="email" id="cEmail">
+<label data-i18n="city">City</label>
+<input type="text" id="cLocation" required>
+<label data-i18n="gstNum">GST Number (Optional)</label>
+<input type="text" id="cGst">
+<button type="submit" class="btn-primary" data-i18n="registerBtn">Register</button>
+</form>
+</div>
+</div>
 
-    <!-- Labour Dashboard -->
-    <div id="labourDashboard" class="screen">
-        <div class="header">
-            <div>
-                <h2>👋 <span id="labourName"></span></h2>
-                <small id="labourSkillDisp"></small>
-            </div>
-            <button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
-        </div>
-        <div class="container">
-            <div class="stats">
-                <div class="stat-card" onclick="showMyApplications()">
-                    <h3 id="appliedCount">0</h3>
-                    <p data-i18n="applied">Applied</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="workingCount">0</h3>
-                    <p data-i18n="working">Working</p>
-                </div>
-                <div class="stat-card">
-                    <h3>⭐ <span id="myRating">5.0</span></h3>
-                    <p data-i18n="rating">Rating</p>
-                </div>
-                <div class="stat-card" onclick="showWallet()">
-                    <h3>₹<span id="walletBalance">0</span></h3>
-                    <p data-i18n="earnings">Earnings</p>
-                </div>
-            </div>
-            
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('jobs', this)" data-i18n="availableJobs">Available Jobs</button>
-                <button class="tab-btn" onclick="switchTab('myApps', this)" data-i18n="myApplications">My Applications</button>
-                <button class="tab-btn" onclick="switchTab('profile', this)" data-i18n="profile">Profile</button>
-            </div>
-            
-            <div id="jobsTab" class="tab-content active">
-                <input type="text" id="jobSearch" placeholder="🔍 Search jobs..." onkeyup="filterJobs()" class="search-box">
-                <div id="jobsList"></div>
-            </div>
-            
-            <div id="myAppsTab" class="tab-content">
-                <div id="myApplicationsList"></div>
-            </div>
-            
-            <div id="profileTab" class="tab-content">
-                <div id="profileInfo"></div>
-            </div>
-        </div>
-    </div>
+<div id="labourDashboard" class="screen">
+<div class="header">
+<div>
+<h2>👋 <span id="labourName"></span></h2>
+<small id="labourSkillDisp"></small>
+</div>
+<button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+</div>
+<div class="container">
+<div class="stats">
+<div class="stat-card">
+<h3 id="appliedCount">0</h3>
+<p data-i18n="applied">Applied</p>
+</div>
+<div class="stat-card">
+<h3 id="workingCount">0</h3>
+<p data-i18n="working">Working</p>
+</div>
+<div class="stat-card">
+<h3>⭐ <span id="myRating">5.0</span></h3>
+<p data-i18n="rating">Rating</p>
+</div>
+<div class="stat-card" onclick="showWallet()">
+<h3>₹<span id="walletBalance">0</span></h3>
+<p data-i18n="earnings">Earnings</p>
+</div>
+</div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab('jobs',this)" data-i18n="availableJobs">Available Jobs</button>
+<button class="tab-btn" onclick="switchTab('myApps',this)" data-i18n="myApplications">My Applications</button>
+<button class="tab-btn" onclick="switchTab('profile',this)" data-i18n="profile">Profile</button>
+</div>
+<div id="jobsTab" class="tab-content active">
+<input type="text" id="jobSearch" placeholder="🔍 Search jobs..." onkeyup="filterJobs()" class="search-box">
+<div id="jobsList"></div>
+</div>
+<div id="myAppsTab" class="tab-content">
+<div id="myApplicationsList"></div>
+</div>
+<div id="profileTab" class="tab-content">
+<div id="profileInfo"></div>
+</div>
+</div>
+</div>
 
-    <!-- Contractor Dashboard -->
-    <div id="contractorDashboard" class="screen">
-        <div class="header">
-            <div>
-                <h2>👋 <span id="contractorName"></span></h2>
-                <small id="contractorCompany"></small>
-            </div>
-            <button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
-        </div>
-        <div class="container">
-            <div class="stats">
-                <div class="stat-card">
-                    <h3 id="myJobsCount">0</h3>
-                    <p data-i18n="postedJobs">Posted Jobs</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="totalApps">0</h3>
-                    <p data-i18n="applications">Applications</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="activeWorkers">0</h3>
-                    <p data-i18n="activeWorkers">Active Workers</p>
-                </div>
-                <div class="stat-card">
-                    <h3>₹<span id="totalSpent">0</span></h3>
-                    <p data-i18n="totalSpent">Total Spent</p>
-                </div>
-            </div>
-            
-            <button class="btn-primary" onclick="showScreen('postJob')">➕ <span data-i18n="postNewJob">Post New Job</span></button>
-            
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('myJobs', this)" data-i18n="myJobs">My Jobs</button>
-                <button class="tab-btn" onclick="switchTab('browseLabour', this)" data-i18n="browseWorkers">Browse Workers</button>
-            </div>
-            
-            <div id="myJobsTab" class="tab-content active">
-                <div id="myJobsList"></div>
-            </div>
-            
-            <div id="browseLabourTab" class="tab-content">
-                <input type="text" id="labourSearch" placeholder="🔍 Search workers..." onkeyup="filterLabour()" class="search-box">
-                <select id="skillFilter" onchange="filterLabour()" class="search-box">
-                    <option value="">All Skills</option>
-                    <option value="Helper">Helper</option>
-                    <option value="Mason">Mason</option>
-                    <option value="Carpenter">Carpenter</option>
-                    <option value="Painter">Painter</option>
-                    <option value="Electrician">Electrician</option>
-                    <option value="Plumber">Plumber</option>
-                    <option value="Welder">Welder</option>
-                </select>
-                <div id="availableLabour"></div>
-            </div>
-        </div>
-    </div>
+<div id="contractorDashboard" class="screen">
+<div class="header">
+<div>
+<h2>👋 <span id="contractorName"></span></h2>
+<small id="contractorCompany"></small>
+</div>
+<button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+</div>
+<div class="container">
+<div class="stats">
+<div class="stat-card">
+<h3 id="myJobsCount">0</h3>
+<p data-i18n="postedJobs">Posted Jobs</p>
+</div>
+<div class="stat-card">
+<h3 id="totalApps">0</h3>
+<p data-i18n="applications">Applications</p>
+</div>
+<div class="stat-card">
+<h3 id="activeWorkers">0</h3>
+<p data-i18n="activeWorkers">Active Workers</p>
+</div>
+<div class="stat-card">
+<h3>₹<span id="totalSpent">0</span></h3>
+<p data-i18n="totalSpent">Total Spent</p>
+</div>
+</div>
+<button class="btn-primary" onclick="showScreen('postJob')">➕ <span data-i18n="postNewJob">Post New Job</span></button>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab('myJobs',this)" data-i18n="myJobs">My Jobs</button>
+<button class="tab-btn" onclick="switchTab('browseLabour',this)" data-i18n="browseWorkers">Browse Workers</button>
+</div>
+<div id="myJobsTab" class="tab-content active">
+<div id="myJobsList"></div>
+</div>
+<div id="browseLabourTab" class="tab-content">
+<input type="text" id="labourSearch" placeholder="🔍 Search workers..." onkeyup="filterLabour()" class="search-box">
+<select id="skillFilter" onchange="filterLabour()" class="search-box">
+<option value="">All Skills</option>
+<option value="Helper">Helper</option>
+<option value="Mason">Mason</option>
+<option value="Carpenter">Carpenter</option>
+<option value="Painter">Painter</option>
+<option value="Electrician">Electrician</option>
+<option value="Plumber">Plumber</option>
+<option value="Welder">Welder</option>
+</select>
+<div id="availableLabour"></div>
+</div>
+</div>
+</div>
 
-    <!-- Post Job -->
-    <div id="postJob" class="screen">
-        <div class="container">
-            <button class="back-btn" onclick="showScreen('contractorDashboard')">← <span data-i18n="back">Back</span></button>
-            <h2 data-i18n="postNewJob">Post New Job</h2>
-            <form onsubmit="postNewJob(event)">
-                <label data-i18n="jobTitle">Job Title</label>
-                <input type="text" id="jTitle" required>
-                
-                <label data-i18n="skillNeeded">Skill Needed</label>
-                <select id="jSkill" required>
-                    <option value="">--</option>
-                    <option value="Helper">Helper</option>
-                    <option value="Mason">Mason</option>
-                    <option value="Carpenter">Carpenter</option>
-                    <option value="Painter">Painter</option>
-                    <option value="Electrician">Electrician</option>
-                    <option value="Plumber">Plumber</option>
-                    <option value="Welder">Welder</option>
-                    <option value="Tile Worker">Tile Worker</option>
-                    <option value="POP Worker">POP Worker</option>
-                    <option value="Steel Bender">Steel Bender</option>
-                </select>
-                
-                <label data-i18n="workersNeeded">Workers Needed</label>
-                <input type="number" id="jWorkers" min="1" required>
-                
-                <label data-i18n="dailyWage">Daily Wage (₹)</label>
-                <input type="number" id="jWage" required>
-                
-                <label data-i18n="duration">Duration (Days)</label>
-                <input type="number" id="jDays" min="1" required>
-                
-                <label data-i18n="startDate">Start Date</label>
-                <input type="date" id="jStartDate" required>
-                
-                <label data-i18n="siteAddress">Site Address</label>
-                <input type="text" id="jLocation" required>
-                
-                <label data-i18n="pincode">Pincode</label>
-                <input type="text" id="jPincode" pattern="[0-9]{6}" required>
-                
-                <label data-i18n="description">Description</label>
-                <textarea id="jDesc" rows="3"></textarea>
-                
-                <button type="submit" class="btn-primary" data-i18n="postJobBtn">Post Job</button>
-            </form>
-        </div>
-    </div>
+<div id="postJob" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('contractorDashboard')">← <span data-i18n="back">Back</span></button>
+<h2 data-i18n="postNewJob">Post New Job</h2>
+<form onsubmit="postNewJob(event)">
+<label data-i18n="jobTitle">Job Title</label>
+<input type="text" id="jTitle" required>
+<label data-i18n="skillNeeded">Skill Needed</label>
+<select id="jSkill" required>
+<option value="">--</option>
+<option value="Helper">Helper</option>
+<option value="Mason">Mason</option>
+<option value="Carpenter">Carpenter</option>
+<option value="Painter">Painter</option>
+<option value="Electrician">Electrician</option>
+<option value="Plumber">Plumber</option>
+<option value="Welder">Welder</option>
+<option value="Tile Worker">Tile Worker</option>
+<option value="POP Worker">POP Worker</option>
+<option value="Steel Bender">Steel Bender</option>
+</select>
+<label data-i18n="workersNeeded">Workers Needed</label>
+<input type="number" id="jWorkers" min="1" required>
+<label data-i18n="dailyWage">Daily Wage (₹)</label>
+<input type="number" id="jWage" required>
+<label data-i18n="duration">Duration (Days)</label>
+<input type="number" id="jDays" min="1" required>
+<label data-i18n="startDate">Start Date</label>
+<input type="date" id="jStartDate" required>
+<label data-i18n="siteAddress">Site Address</label>
+<input type="text" id="jLocation" required>
+<label data-i18n="pincode">Pincode</label>
+<input type="text" id="jPincode" pattern="[0-9]{6}" required>
+<label data-i18n="description">Description</label>
+<textarea id="jDesc" rows="3"></textarea>
+<button type="submit" class="btn-primary" data-i18n="postJobBtn">Post Job</button>
+</form>
+</div>
+</div>
 
-    <!-- Job Details with Applications -->
-    <div id="jobDetails" class="screen">
-        <div class="container">
-            <button class="back-btn" onclick="showScreen('contractorDashboard')">← <span data-i18n="back">Back</span></button>
-            <div id="jobDetailsContent"></div>
-        </div>
-    </div>
+<div id="walletScreen" class="screen">
+<div class="container">
+<button class="back-btn" onclick="showScreen('labourDashboard')">← <span data-i18n="back">Back</span></button>
+<h2>💰 <span data-i18n="myWallet">My Wallet</span></h2>
+<div class="wallet-card">
+<p data-i18n="totalBalance">Total Balance</p>
+<h1>₹<span id="walletTotalAmount">0</span></h1>
+</div>
+<h3 data-i18n="transactions">Transactions</h3>
+<div id="transactionList"></div>
+</div>
+</div>
 
-    <!-- Wallet Screen -->
-    <div id="walletScreen" class="screen">
-        <div class="container">
-            <button class="back-btn" onclick="showScreen('labourDashboard')">← <span data-i18n="back">Back</span></button>
-            <h2>💰 <span data-i18n="myWallet">My Wallet</span></h2>
-            <div class="wallet-card">
-                <p data-i18n="totalBalance">Total Balance</p>
-                <h1>₹<span id="walletTotalAmount">0</span></h1>
-            </div>
-            <h3 data-i18n="transactions">Transactions</h3>
-            <div id="transactionList"></div>
-        </div>
-    </div>
+<div id="adminDashboard" class="screen">
+<div class="header">
+<h2>⚙️ <span data-i18n="adminPanel">Admin Panel</span></h2>
+<button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+</div>
+<div class="container">
+<div class="stats">
+<div class="stat-card">
+<h3 id="totalLabour">0</h3>
+<p data-i18n="totalWorkers">Workers</p>
+</div>
+<div class="stat-card">
+<h3 id="totalContractors">0</h3>
+<p data-i18n="totalContractors">Contractors</p>
+</div>
+<div class="stat-card">
+<h3 id="totalJobs">0</h3>
+<p data-i18n="totalJobs">Jobs</p>
+</div>
+<div class="stat-card">
+<h3>₹<span id="totalRevenue">0</span></h3>
+<p data-i18n="commission">Commission (15%)</p>
+</div>
+</div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchAdminTab('workers',this)" data-i18n="workers">Workers</button>
+<button class="tab-btn" onclick="switchAdminTab('contractors',this)" data-i18n="contractors">Contractors</button>
+<button class="tab-btn" onclick="switchAdminTab('jobs',this)" data-i18n="jobs">Jobs</button>
+<button class="tab-btn" onclick="switchAdminTab('payments',this)" data-i18n="payments">Payments</button>
+</div>
+<div id="workersAdminTab" class="tab-content active"><div id="allLabour"></div></div>
+<div id="contractorsAdminTab" class="tab-content"><div id="allContractors"></div></div>
+<div id="jobsAdminTab" class="tab-content"><div id="allJobs"></div></div>
+<div id="paymentsAdminTab" class="tab-content"><div id="allPayments"></div></div>
+</div>
+</div>
 
-    <!-- Admin Dashboard -->
-    <div id="adminDashboard" class="screen">
-        <div class="header">
-            <h2>⚙️ <span data-i18n="adminPanel">Admin Panel</span></h2>
-            <button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
-        </div>
-        <div class="container">
-            <div class="stats">
-                <div class="stat-card">
-                    <h3 id="totalLabour">0</h3>
-                    <p data-i18n="totalWorkers">Workers</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="totalContractors">0</h3>
-                    <p data-i18n="totalContractors">Contractors</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="totalJobs">0</h3>
-                    <p data-i18n="totalJobs">Jobs</p>
-                </div>
-                <div class="stat-card">
-                    <h3>₹<span id="totalRevenue">0</span></h3>
-                    <p data-i18n="commission">Commission (15%)</p>
-                </div>
-            </div>
-            
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchAdminTab('workers', this)" data-i18n="workers">Workers</button>
-                <button class="tab-btn" onclick="switchAdminTab('contractors', this)" data-i18n="contractors">Contractors</button>
-                <button class="tab-btn" onclick="switchAdminTab('jobs', this)" data-i18n="jobs">Jobs</button>
-                <button class="tab-btn" onclick="switchAdminTab('payments', this)" data-i18n="payments">Payments</button>
-            </div>
-            
-            <div id="workersAdminTab" class="tab-content active">
-                <div id="allLabour"></div>
-            </div>
-            <div id="contractorsAdminTab" class="tab-content">
-                <div id="allContractors"></div>
-            </div>
-            <div id="jobsAdminTab" class="tab-content">
-                <div id="allJobs"></div>
-            </div>
-            <div id="paymentsAdminTab" class="tab-content">
-                <div id="allPayments"></div>
-            </div>
-        </div>
-    </div>
+<div id="toast" class="toast"></div>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="toast"></div>
-
-    <script src="app.js"></script>
-</body>
-</html>
+<script>
+const translations={
+en:{appName:"Mazdoor Mitra",tagline:"Right Work, Right Worker",getStarted:"Get Started",whoAreYou:"Who are you?",iAmLabour:"I am a Worker",findWork:"Find work near me",iAmContractor:"I am a Contractor",hireWorkers:"Hire workers for projects",iAmAdmin:"Admin Panel",manageAll:"Manage everything",back:"Back",login:"Login",loginBtn:"Login",newUser:"New User?",registerHere:"Register Here",workerReg:"Worker Registration",fullName:"Full Name",mobileNum:"Mobile Number",age:"Age",gender:"Gender",primarySkill:"Primary Skill",experience:"Experience (Years)",city:"City/Area",pincode:"Pincode",aadhaar:"Aadhaar (Last 4 digits)",dailyWage:"Daily Wage (₹)",bankAccount:"UPI ID / Bank Account",registerBtn:"Register",contractorReg:"Contractor Registration",companyName:"Company Name (Optional)",email:"Email",gstNum:"GST Number (Optional)",logout:"Logout",applied:"Applied",working:"Working",rating:"Rating",earnings:"Earnings",availableJobs:"Available Jobs",myApplications:"My Applications",profile:"Profile",postedJobs:"Posted Jobs",applications:"Applications",activeWorkers:"Active Workers",totalSpent:"Total Spent",postNewJob:"Post New Job",myJobs:"My Jobs",browseWorkers:"Browse Workers",jobTitle:"Job Title",skillNeeded:"Skill Needed",workersNeeded:"Workers Needed",duration:"Duration (Days)",startDate:"Start Date",siteAddress:"Site Address",description:"Description",postJobBtn:"Post Job",myWallet:"My Wallet",totalBalance:"Total Balance",transactions:"Transactions",adminPanel:"Admin Panel",totalWorkers:"Workers",totalContractors:"Contractors",totalJobs:"Jobs",commission:"Commission (15%)",workers:"Workers",contractors:"Contractors",jobs:"Jobs",payments:"Payments"},
+hi:{appName:"मज़दूर मित्र",tagline:"सही काम, सही मज़दूर",getStarted:"शुरू करें",whoAreYou:"आप कौन हैं?",iAmLabour:"मैं मज़दूर हूं",findWork:"पास का काम ढूंढें",iAmContractor:"मैं ठेकेदार हूं",hireWorkers:"प्रोजेक्ट के लिए मज़दूर",iAmAdmin:"एडमिन पैनल",manageAll:"सब कुछ संभालें",back:"वापस",login:"लॉगिन",loginBtn:"लॉगिन करें",newUser:"नए हैं?",registerHere:"रजिस्टर करें",workerReg:"मज़दूर रजिस्ट्रेशन",fullName:"पूरा नाम",mobileNum:"मोबाइल नंबर",age:"उम्र",gender:"लिंग",primarySkill:"मुख्य काम",experience:"अनुभव (साल)",city:"शहर/इलाका",pincode:"पिन कोड",aadhaar:"आधार (आखिरी 4 अंक)",dailyWage:"रोज़ का रेट (₹)",bankAccount:"UPI / बैंक अकाउंट",registerBtn:"रजिस्टर करें",contractorReg:"ठेकेदार रजिस्ट्रेशन",companyName:"कंपनी का नाम",email:"ईमेल",gstNum:"GST नंबर",logout:"लॉगआउट",applied:"अप्लाई किए",working:"काम पर",rating:"रेटिंग",earnings:"कमाई",availableJobs:"उपलब्ध काम",myApplications:"मेरी अर्जियां",profile:"प्रोफाइल",postedJobs:"पोस्ट किए काम",applications:"अर्जियां",activeWorkers:"एक्टिव मज़दूर",totalSpent:"कुल खर्च",postNewJob:"नया काम पोस्ट करें",myJobs:"मेरे काम",browseWorkers:"मज़दूर देखें",jobTitle:"काम का नाम",skillNeeded:"कौन सा मज़दूर",workersNeeded:"कितने मज़दूर",duration:"अवधि (दिन)",startDate:"शुरू की तारीख",siteAddress:"साइट का पता",description:"विवरण",postJobBtn:"पोस्ट करें",myWallet:"मेरा वॉलेट",totalBalance:"कुल बैलेंस",transactions:"लेन-देन",adminPanel:"एडमिन पैनल",totalWorkers:"मज़दूर",totalContractors:"ठेकेदार",totalJobs:"काम",commission:"कमीशन (15%)",workers:"मज़दूर",contractors:"ठेकेदार",jobs:"काम",payments:"पेमेंट"},
+mr:{appName:"मजदूर मित्र",tagline:"योग्य काम, योग्य कामगार",getStarted:"सुरू करा",whoAreYou:"तुम्ही कोण आहात?",iAmLabour:"मी कामगार आहे",findWork:"जवळचे काम शोधा",iAmContractor:"मी कंत्राटदार आहे",hireWorkers:"प्रकल्पासाठी कामगार",iAmAdmin:"अॅडमिन पॅनेल",manageAll:"सर्व व्यवस्थापन",back:"मागे",login:"लॉगिन",loginBtn:"लॉगिन करा",newUser:"नवीन आहात?",registerHere:"नोंदणी करा",workerReg:"कामगार नोंदणी",fullName:"पूर्ण नाव",mobileNum:"मोबाईल नंबर",age:"वय",gender:"लिंग",primarySkill:"मुख्य कौशल्य",experience:"अनुभव (वर्षे)",city:"शहर/क्षेत्र",pincode:"पिन कोड",aadhaar:"आधार (शेवटचे 4 अंक)",dailyWage:"रोजचा दर (₹)",bankAccount:"UPI / बँक खाते",registerBtn:"नोंदणी करा",contractorReg:"कंत्राटदार नोंदणी",companyName:"कंपनीचे नाव",email:"ईमेल",gstNum:"GST क्रमांक",logout:"लॉगआउट",applied:"अर्ज केले",working:"कामावर",rating:"रेटिंग",earnings:"कमाई",availableJobs:"उपलब्ध कामे",myApplications:"माझे अर्ज",profile:"प्रोफाइल",postedJobs:"पोस्ट केलेली कामे",applications:"अर्ज",activeWorkers:"सक्रिय कामगार",totalSpent:"एकूण खर्च",postNewJob:"नवीन काम पोस्ट करा",myJobs:"माझी कामे",browseWorkers:"कामगार पहा",jobTitle:"कामाचे नाव",skillNeeded:"कोणते कौशल्य",workersNeeded:"किती कामगार",duration:"कालावधी (दिवस)",startDate:"सुरुवातीची तारीख",siteAddress:"साइटचा पत्ता",description:"वर्णन",postJobBtn:"पोस्ट करा",myWallet:"माझे वॉलेट",totalBalance:"एकूण बॅलन्स",transactions:"व्यवहार",adminPanel:"अॅडमिन पॅनेल",totalWorkers:"कामगार",totalContractors:"कंत्राटदार",totalJobs:"कामे",commission:"कमिशन (15%)",workers:"कामगार",contractors:"कंत्राटदार",jobs:"कामे",payments:"पेमेंट"},
+gu:{appName:"મજૂર મિત્ર",tagline:"યોગ્ય કામ, યોગ્ય મજૂર",getStarted:"શરૂ કરો",whoAreYou:"તમે કોણ છો?",iAmLabour:"હું મજૂર છું",findWork:"નજીકનું કામ શોધો",iAmContractor:"હું કોન્ટ્રાક્ટર છું",hireWorkers:"પ્રોજેક્ટ માટે મજૂર",iAmAdmin:"એડમિન પેનલ",manageAll:"બધું મેનેજ કરો",back:"પાછા",login:"લોગિન",loginBtn:"લોગિન કરો",newUser:"નવા છો?",registerHere:"નોંધણી કરો",workerReg:"મજૂર નોંધણી",fullName:"પૂરું નામ",mobileNum:"મોબાઇલ નંબર",age:"ઉંમર",gender:"લિંગ",primarySkill:"મુખ્ય કૌશલ્ય",experience:"અનુભવ (વર્ષ)",city:"શહેર/વિસ્તાર",pincode:"પિન કોડ",aadhaar:"આધાર (છેલ્લા 4 અંક)",dailyWage:"રોજનો દર (₹)",bankAccount:"UPI / બેંક એકાઉન્ટ",registerBtn:"નોંધણી કરો",contractorReg:"કોન્ટ્રાક્ટર નોંધણી",companyName:"કંપનીનું નામ",email:"ઇમેઇલ",gstNum:"GST નંબર",logout:"લોગઆઉટ",applied:"અરજી કરી",working:"કામ પર",rating:"રેટિંગ",earnings:"કમાણી",availableJobs:"ઉપલબ્ધ કામો",myApplications:"મારી અરજીઓ",profile:"પ્રોફાઇલ",postedJobs:"પોસ્ટ કરેલા કામો",applications:"અરજીઓ",activeWorkers:"સક્રિય મજૂરો",totalSpent:"કુલ ખર્ચ",postNewJob:"નવું કામ પોસ્ટ કરો",myJobs:"મારા કામો",browseWorkers:"મજૂરો જુઓ",jobTitle:"કામનું નામ",skillNeeded:"કયું કૌશલ્ય",workersNeeded:"કેટલા મજૂરો",duration:"અવધિ (દિવસ)",startDate:"શરૂઆતની તારીખ",siteAddress:"સાઇટનું સરનામું",description:"વર્ણન",postJobBtn:"પોસ્ટ કરો",myWallet:"મારું વોલેટ",totalBalance:"કુલ બેલેન્સ",transactions:"વ્યવહારો",adminPanel:"એડમિન પેનલ",totalWorkers:"મજૂરો",totalContractors:"કોન્ટ્રાક્ટરો",totalJobs:"કામો",commission:"કમિશન 
